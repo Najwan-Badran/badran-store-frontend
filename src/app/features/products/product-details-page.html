@@ -1,0 +1,264 @@
+<section class="automotive-page product-details-page">
+  <a class="ghost-button back-link" routerLink="/products">
+    <span class="material-icons" aria-hidden="true">arrow_back</span>
+    Back to products
+  </a>
+
+  @if (isLoading()) {
+    <section class="detail-shell skeleton-detail" aria-label="Loading product details" aria-busy="true">
+      <div class="detail-media skeleton-block"></div>
+      <div class="detail-copy">
+        <span class="skeleton-line short"></span>
+        <span class="skeleton-line"></span>
+        <span class="skeleton-line"></span>
+      </div>
+    </section>
+  } @else if (errorMessage()) {
+    <section class="empty-state" role="alert">
+      <div class="empty-state-content">
+        <span class="feature-icon material-icons" aria-hidden="true">error</span>
+        <h1>{{ 'product.details' | translate }} could not load.</h1>
+        <p>{{ errorMessage() }}</p>
+        <button type="button" class="brand-button" (click)="loadProduct()">Retry</button>
+      </div>
+    </section>
+  } @else if (product(); as product) {
+    <section class="detail-shell">
+      <div class="detail-media-column">
+        <div
+          class="detail-media"
+          tabindex="0"
+          aria-label="Product image preview. Focus or hover to zoom."
+          [class.zoomed]="isImageZoomed()"
+          (mouseenter)="setImageZoomed(true)"
+          (mouseleave)="setImageZoomed(false)"
+          (focusin)="setImageZoomed(true)"
+          (focusout)="setImageZoomed(false)"
+        >
+        <div class="detail-badges">
+          @if (product.isNewArrival) {
+            <span class="detail-badge new-badge">New arrival</span>
+          }
+          @if (product.isOnSale || (product.discountPrice && product.discountPrice < product.basePrice) || (product.salePrice && product.salePrice < product.basePrice)) {
+            <span class="detail-badge sale-badge">Sale</span>
+          }
+        </div>
+        <app-product-image
+          class="main-product-image"
+          [src]="primaryImage()"
+          [alt]="product.nameEn"
+          loading="eager"
+          fetchPriority="high"
+        />
+        <span class="zoom-hint"><span class="material-icons" aria-hidden="true">zoom_in</span> Hover to zoom</span>
+        </div>
+        @if (galleryImages().length > 1) {
+          <div class="thumbnail-gallery" role="list" aria-label="Product image gallery">
+            @for (image of galleryImages(); track index; let index = $index) {
+              <button
+                type="button"
+                class="thumbnail-button"
+                [class.selected]="selectedImageIndex() === index"
+                [attr.aria-label]="'View product image ' + (index + 1)"
+                [attr.aria-pressed]="selectedImageIndex() === index"
+                (click)="selectImage(index)"
+              >
+                <app-product-image [src]="image" [alt]="product.nameEn + ' view ' + (index + 1)" loading="lazy" [compact]="true" />
+              </button>
+            }
+          </div>
+        }
+      </div>
+
+      <article class="detail-copy">
+        <div class="detail-heading-line">
+          <span class="eyebrow">{{ product.brand?.nameEn || 'Badran' }}</span>
+          <span class="detail-category">{{ product.category.nameEn }}</span>
+        </div>
+        <h1 class="page-title">{{ product.nameEn }}</h1>
+        <p class="page-copy">{{ product.descriptionEn || product.sku }}</p>
+
+        <div class="detail-meta">
+          <span class="rating-summary" [attr.aria-label]="'Rating ' + (product.avgRating || 0) + ' out of 5 from ' + (product.reviewCount || 0) + ' reviews'">
+            <span class="stars" aria-hidden="true">
+              @for (star of [1, 2, 3, 4, 5]; track star) {
+                <span class="material-icons">{{ product.avgRating >= star ? 'star' : 'star_border' }}</span>
+              }
+            </span>
+            <strong>{{ product.avgRating || 0 | number: '1.1-1' }}</strong>
+            <span>{{ product.reviewCount || 0 }} reviews</span>
+          </span>
+          <span class="tag" [class.low-stock]="product.stockQuantity <= product.reorderThreshold">
+            {{ product.stockQuantity }} in stock
+          </span>
+        </div>
+
+        <div class="purchase-panel">
+          <div class="detail-price">
+            @if (product.discountPrice || product.salePrice) {
+              <span class="price sale-price">{{ (product.discountPrice || product.salePrice) | currency: 'ILS' : 'symbol' : '1.2-2' }}</span>
+              <span class="original-price">{{ product.basePrice | currency: 'ILS' : 'symbol' : '1.2-2' }}</span>
+            } @else {
+              <span class="price">{{ product.basePrice | currency: 'ILS' : 'symbol' : '1.2-2' }}</span>
+            }
+          </div>
+          <label class="quantity-control">
+            <span>Quantity</span>
+            <input
+              name="productQuantity"
+              type="number"
+              min="1"
+              [max]="product.stockQuantity"
+              [ngModel]="quantity()"
+              (ngModelChange)="setQuantity($event)"
+              aria-label="Quantity"
+            />
+          </label>
+          <div class="detail-actions">
+            <button
+              type="button"
+              class="brand-button"
+              [disabled]="!canAddToCart()"
+              [attr.aria-busy]="isSubmitting()"
+              [attr.aria-label]="'Add ' + product.nameEn + ' to cart'"
+              (click)="addToCart()"
+            >
+              <span class="material-icons" aria-hidden="true">add_shopping_cart</span>
+              {{ isSubmitting() ? 'Adding' : 'Add to Cart' }}
+            </button>
+            <button
+              type="button"
+              class="ghost-button"
+              [disabled]="isSubmitting()"
+              [attr.aria-busy]="isSubmitting()"
+              [attr.aria-label]="'Save ' + product.nameEn + ' to wishlist'"
+              (click)="addToWishlist()"
+            >
+              <span class="material-icons" aria-hidden="true">favorite</span>
+              Wishlist
+            </button>
+          </div>
+          <div class="purchase-assurance">
+            <span><span class="material-icons" aria-hidden="true">verified</span> Secure checkout</span>
+            <span><span class="material-icons" aria-hidden="true">inventory_2</span> Live stock</span>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="surface-grid">
+      <article class="brand-card">
+        <span class="card-icon material-icons" aria-hidden="true">qr_code_2</span>
+        <h2>SKU</h2>
+        <p>{{ product.sku }}</p>
+      </article>
+      <article class="brand-card">
+        <span class="card-icon material-icons" aria-hidden="true">category</span>
+        <h2>Category</h2>
+        <p>{{ product.category.nameEn }}</p>
+      </article>
+      <article class="brand-card">
+        <span class="card-icon material-icons" aria-hidden="true">inventory</span>
+        <h2>Inventory</h2>
+        <p>Reorder threshold: {{ product.reorderThreshold }}</p>
+      </article>
+    </section>
+
+    <section class="dashboard-panel specs-panel" aria-labelledby="specs-title">
+      <div class="status-row">
+        <div>
+          <span class="eyebrow">Technical</span>
+          <h2 id="specs-title">Specifications</h2>
+        </div>
+      </div>
+      @if ((specifications() | keyvalue).length) {
+        <dl class="spec-grid">
+          @for (specification of specifications() | keyvalue; track specification.key) {
+            <div>
+              <dt>{{ specification.key }}</dt>
+              <dd>{{ specification.value }}</dd>
+            </div>
+          }
+        </dl>
+      } @else {
+        <p class="muted">No additional specifications were published for this product.</p>
+      }
+    </section>
+
+    <section class="dashboard-panel reviews-panel" aria-labelledby="reviews-title">
+      <div class="status-row">
+        <div>
+          <span class="eyebrow">Reviews</span>
+          <h2 id="reviews-title">Customer Reviews</h2>
+        </div>
+        <div class="review-actions">
+          <span class="status-badge">{{ reviews().length }} published</span>
+          <button type="button" class="ghost-button" [disabled]="reviewsLoading()" [attr.aria-busy]="reviewsLoading()" (click)="refreshReviews()">
+            Refresh
+          </button>
+        </div>
+      </div>
+
+      @if (canReview()) {
+        <form class="review-form" [formGroup]="reviewForm" (ngSubmit)="submitReview()" novalidate>
+          <label class="field-shell">
+            <span>Order ID</span>
+            <input type="number" min="1" formControlName="orderId" autocomplete="off" />
+            @if (getReviewError('orderId')) {
+              <small role="alert">{{ getReviewError('orderId') }}</small>
+            }
+          </label>
+          <label class="field-shell">
+            <span>Rating</span>
+            <select formControlName="rating">
+              <option [ngValue]="5">5</option>
+              <option [ngValue]="4">4</option>
+              <option [ngValue]="3">3</option>
+              <option [ngValue]="2">2</option>
+              <option [ngValue]="1">1</option>
+            </select>
+            @if (getReviewError('rating')) {
+              <small role="alert">{{ getReviewError('rating') }}</small>
+            }
+          </label>
+          <label class="field-shell wide-field">
+            <span>Comment</span>
+            <textarea rows="3" maxlength="5000" formControlName="comment"></textarea>
+            @if (getReviewError('comment')) {
+              <small role="alert">{{ getReviewError('comment') }}</small>
+            }
+          </label>
+          <button type="submit" class="brand-button" [disabled]="reviewForm.invalid || isSavingReview()" [attr.aria-busy]="isSavingReview()">
+            {{ isSavingReview() ? 'Submitting Review' : 'Add Review' }}
+          </button>
+        </form>
+      } @else {
+        <p class="muted">Sign in to add a review from a completed order.</p>
+      }
+
+      @if (reviewSuccessMessage()) {
+        <p class="review-message success" role="status">{{ reviewSuccessMessage() }}</p>
+      }
+      @if (reviewErrorMessage()) {
+        <p class="review-message" role="alert">{{ reviewErrorMessage() }}</p>
+      }
+      @if (reviewsLoading()) {
+        <p class="muted" role="status">Refreshing reviews...</p>
+      }
+
+      @if (reviews().length) {
+        <div class="review-list">
+          @for (review of reviews(); track review.reviewId) {
+            <article class="review-card">
+              <strong>{{ review.rating }} / 5</strong>
+              <p>{{ review.comment || 'No comment provided.' }}</p>
+              <span>{{ review.createdAt | date: 'mediumDate' }}</span>
+            </article>
+          }
+        </div>
+      } @else {
+        <p class="muted">No published reviews yet.</p>
+      }
+    </section>
+  }
+</section>

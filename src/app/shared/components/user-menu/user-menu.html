@@ -1,0 +1,31 @@
+<button mat-button class="user-menu-trigger" type="button" [matMenuTriggerFor]="userMenu" [attr.aria-label]="'nav.account' | translate">
+  <mat-icon aria-hidden="true">account_circle</mat-icon>
+  <span class="user-button-label">{{ displayName() }}</span>
+  <mat-icon aria-hidden="true">expand_more</mat-icon>
+</button>
+
+<mat-menu #userMenu="matMenu" xPosition="before">
+  <div class="user-summary" role="presentation">
+    <strong>{{ displayName() }}</strong>
+    @if (user()?.email) {
+      <span>{{ user()?.email }}</span>
+    }
+  </div>
+  <mat-divider />
+  <a mat-menu-item routerLink="/profile">
+    <mat-icon aria-hidden="true">person</mat-icon>
+    <span>{{ 'nav.profile' | translate }}</span>
+  </a>
+  <a mat-menu-item routerLink="/orders">
+    <mat-icon aria-hidden="true">receipt_long</mat-icon>
+    <span>{{ 'nav.orders' | translate }}</span>
+  </a>
+  <button mat-menu-item type="button" (click)="logout()">
+    <mat-icon aria-hidden="true">logout</mat-icon>
+    <span>{{ 'nav.logout' | translate }}</span>
+  </button>
+  <button mat-menu-item type="button" (click)="logoutAll()">
+    <mat-icon aria-hidden="true">logout</mat-icon>
+    <span>{{ 'nav.logoutAll' | translate }}</span>
+  </button>
+</mat-menu>

@@ -1,0 +1,171 @@
+<section class="automotive-page order-details-page">
+  <a class="ghost-button back-link" routerLink="/orders">
+    <span class="material-icons" aria-hidden="true">arrow_back</span>
+    Back to orders
+  </a>
+
+  @if (isLoading()) {
+    <section class="detail-skeleton" aria-label="Loading order details" aria-busy="true">
+      <article class="dashboard-panel skeleton-panel" aria-hidden="true">
+        <span class="skeleton-line short"></span>
+        <span class="skeleton-line"></span>
+        <span class="skeleton-line medium"></span>
+      </article>
+    </section>
+  } @else if (errorMessage()) {
+    <section class="empty-state" role="alert">
+      <div class="empty-state-content">
+        <span class="feature-icon material-icons" aria-hidden="true">error</span>
+        <h1>{{ 'orders.details' | translate }} could not load.</h1>
+        <p>{{ errorMessage() }}</p>
+        <button type="button" class="brand-button" (click)="loadOrder()">Retry</button>
+      </div>
+    </section>
+  } @else if (order(); as order) {
+    <header class="page-heading">
+      <span class="eyebrow">Order Details</span>
+      <h1 class="page-title">{{ order.orderNumber }}</h1>
+      <p class="page-copy">
+        Created {{ order.createdAt | date: 'medium' }} · {{ order.fulfillmentMethod }}
+      </p>
+    </header>
+
+    <section class="metric-grid" aria-label="Order metrics">
+      <article class="metric-card">
+        <strong>{{ order.total | currency: 'ILS' : 'symbol' : '1.2-2' }}</strong>
+        <span>Grand total</span>
+      </article>
+      <article class="metric-card">
+        <strong>{{ statusLabel(order.status) }}</strong>
+        <span>Status</span>
+      </article>
+      <article class="metric-card">
+        <strong>{{ order.items.length }}</strong>
+        <span>Line items</span>
+      </article>
+      <article class="metric-card">
+        <strong>{{ paymentStatus(order) }}</strong>
+        <span>Payment</span>
+      </article>
+    </section>
+
+    <section class="dashboard-panel">
+      <div class="status-row">
+        <div>
+          <span class="eyebrow">Timeline</span>
+          <h2>Fulfillment progress</h2>
+        </div>
+        <div class="order-actions">
+          <span class="order-status" [class]="statusTone(order.status)">{{ statusLabel(order.status) }}</span>
+          @if (canCancel()) {
+            <button type="button" class="ghost-button" [disabled]="isCancelling()" [attr.aria-busy]="isCancelling()" (click)="cancelOrder()">
+              Cancel Order
+            </button>
+          }
+        </div>
+      </div>
+      @if (cancelMessage()) {
+        <p class="form-hint" role="status">{{ cancelMessage() }}</p>
+      }
+      <ol class="timeline" aria-label="Order timeline">
+        @for (step of timeline(); track step.key) {
+          <li [class.active]="step.active" [class.current]="step.current" [attr.aria-current]="step.current ? 'step' : null">
+            <span aria-hidden="true"></span>
+            {{ step.label }}
+          </li>
+        }
+      </ol>
+    </section>
+
+    <section class="detail-grid">
+      <article class="dashboard-panel order-lines">
+        <div class="status-row">
+          <div>
+            <span class="eyebrow">Products</span>
+            <h2>Order Items</h2>
+          </div>
+        </div>
+        @for (item of order.items; track item.orderItemId) {
+          <div class="order-line">
+            <div>
+              <strong>{{ productsById().get(item.productId)?.nameEn || 'Product #' + item.productId }}</strong>
+              <span>Qty {{ item.quantity }} · {{ item.unitPrice | currency: 'ILS' : 'symbol' : '1.2-2' }}</span>
+            </div>
+            <strong>{{ item.lineTotal | currency: 'ILS' : 'symbol' : '1.2-2' }}</strong>
+          </div>
+        }
+      </article>
+
+      <aside class="side-stack">
+        <section class="dashboard-panel summary-panel" aria-label="Order price breakdown">
+          <span class="eyebrow">Totals</span>
+          <div class="summary-line">
+            <span>Subtotal</span>
+            <strong>{{ order.subtotal | currency: 'ILS' : 'symbol' : '1.2-2' }}</strong>
+          </div>
+          <div class="summary-line">
+            <span>Shipping</span>
+            <strong>{{ order.deliveryFee | currency: 'ILS' : 'symbol' : '1.2-2' }}</strong>
+          </div>
+          <div class="summary-line">
+            <span>Discount</span>
+            <strong>-{{ order.discountAmount | currency: 'ILS' : 'symbol' : '1.2-2' }}</strong>
+          </div>
+          <div class="summary-line">
+            <span>Tax</span>
+            <strong>{{ tax() | currency: 'ILS' : 'symbol' : '1.2-2' }}</strong>
+          </div>
+          <div class="summary-line total">
+            <span>Grand Total</span>
+            <strong>{{ order.total | currency: 'ILS' : 'symbol' : '1.2-2' }}</strong>
+          </div>
+        </section>
+
+        <section class="dashboard-panel shipping-panel" aria-label="Shipping details">
+          <span class="eyebrow">Shipping</span>
+          @if (order.fulfillmentMethod === 'pickup') {
+            <p>Pickup selected. Store pickup details are managed by fulfillment.</p>
+          } @else {
+            <dl>
+              <div>
+                <dt>City</dt>
+                <dd>{{ order.deliveryCity || 'Not provided' }}</dd>
+              </div>
+              <div>
+                <dt>Zone</dt>
+                <dd>{{ order.deliveryZone || 'Not provided' }}</dd>
+              </div>
+              <div>
+                <dt>Address</dt>
+                <dd>{{ order.deliveryAddressLine || 'Not provided' }}</dd>
+              </div>
+            </dl>
+          }
+        </section>
+
+        <section class="dashboard-panel payment-panel" aria-label="Payment action">
+          <span class="eyebrow">Payment</span>
+          <p>{{ paymentStatus(order) }}</p>
+          @if (paymentErrorMessage()) {
+            <p class="form-hint" role="alert">{{ paymentErrorMessage() }}</p>
+          }
+          @if (paymentSuccessMessage()) {
+            <p class="form-hint success" role="status">{{ paymentSuccessMessage() }}</p>
+          }
+          <label class="field-shell">
+            <span>Method</span>
+            <select [ngModel]="paymentMethod()" (ngModelChange)="setPaymentMethod($event)">
+              <option value="cod">Cash on delivery</option>
+              <option value="card">Card</option>
+              <option value="bank_transfer">Bank transfer</option>
+            </select>
+          </label>
+          <button type="button" class="brand-button" [disabled]="isPaying()" [attr.aria-busy]="isPaying()" (click)="pay()">
+            <span class="material-icons" aria-hidden="true">payments</span>
+            {{ isPaying() ? 'Completing Payment' : paymentErrorMessage() ? 'Retry Payment' : 'Complete Payment' }}
+          </button>
+        </section>
+      </aside>
+    </section>
+  }
+</section>

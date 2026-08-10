@@ -1,0 +1,52 @@
+<footer class="app-footer">
+  <div class="footer-inner">
+    <section class="footer-brand" aria-label="About Badran Store">
+      <img class="footer-logo" src="/assets/badran-logo-transparent.png" alt="" aria-hidden="true" />
+      <div>
+        <strong>{{ appName }}</strong>
+        <span>{{ 'footer.tagline' | translate }}</span>
+      </div>
+      <p>Professional automotive care products, accessories, and garage essentials for drivers and workshops.</p>
+    </section>
+
+    <nav class="footer-column" [attr.aria-label]="'nav.footer' | translate">
+      <strong>About</strong>
+      <a routerLink="/home">{{ 'nav.home' | translate }}</a>
+      <a routerLink="/products">{{ 'nav.products' | translate }}</a>
+      <a routerLink="/profile">{{ 'nav.profile' | translate }}</a>
+      <a routerLink="/orders">{{ 'nav.orders' | translate }}</a>
+    </nav>
+
+    <nav class="footer-column" aria-label="Popular categories">
+      <strong>Categories</strong>
+      <a routerLink="/products">Car Shampoo</a>
+      <a routerLink="/products">Foam Cleaner</a>
+      <a routerLink="/products">Air Fresheners</a>
+      <a routerLink="/products">Accessories</a>
+    </nav>
+
+    <nav class="footer-column" aria-label="Support links">
+      <strong>Support</strong>
+      <a routerLink="/privacy-policy">Privacy Policy</a>
+      <a routerLink="/terms">Terms</a>
+      <a routerLink="/cart">{{ 'nav.cart' | translate }}</a>
+      <a routerLink="/wishlist">{{ 'nav.wishlist' | translate }}</a>
+    </nav>
+
+    <address class="footer-column">
+      <strong>Contact</strong>
+      <a href="tel:+970590000000">
+        <span class="material-icons" aria-hidden="true">phone</span>
+        +970 59 000 0000
+      </a>
+      <a href="mailto:info@badranstore.com">
+        <span class="material-icons" aria-hidden="true">mail</span>
+        info@badranstore.com
+      </a>
+      <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer">Facebook</a>
+    </address>
+  </div>
+  <div class="footer-bottom">
+    <span>Copyright © {{ currentYear }} {{ appName }}. All rights reserved.</span>
+  </div>
+</footer>

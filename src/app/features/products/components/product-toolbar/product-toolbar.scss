@@ -1,0 +1,215 @@
+:host {
+  display: block;
+}
+
+.toolbar {
+  position: sticky;
+  top: calc(var(--app-header-height) + 12px);
+  z-index: 20;
+  display: grid;
+  grid-template-columns: minmax(260px, 1.35fr) minmax(160px, 0.7fr) repeat(2, minmax(150px, 0.65fr)) minmax(150px, 0.6fr) auto auto;
+  gap: 12px;
+  align-items: end;
+  border: 1px solid var(--app-border);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--app-card) 96%, transparent);
+  backdrop-filter: blur(14px);
+  box-shadow: var(--app-shadow-soft);
+  padding: 18px;
+}
+
+.toolbar > * {
+  min-width: 0;
+}
+
+.toolbar-heading {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: 8px;
+}
+
+.toolbar-heading > div {
+  display: grid;
+  max-width: 760px;
+  gap: 8px;
+}
+
+.toolbar-heading h1 {
+  margin: 0;
+  color: var(--app-text);
+  font-size: clamp(1.9rem, 3vw, 3.5rem);
+  font-weight: 950;
+  line-height: 1;
+}
+
+.toolbar-heading p {
+  max-width: 720px;
+  margin: 0;
+  color: var(--app-text-muted);
+  line-height: 1.65;
+}
+
+:host ::ng-deep .mat-mdc-form-field {
+  min-width: 0;
+}
+
+.search-field,
+.sort-field,
+.filter-field {
+  width: 100%;
+}
+
+.search-shell {
+  position: relative;
+  min-width: 0;
+}
+
+.search-suggestions {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  left: 0;
+  z-index: 20;
+  overflow: hidden;
+  border: 1px solid var(--app-border-strong);
+  border-radius: 8px;
+  background: var(--app-card);
+  box-shadow: var(--app-shadow);
+  padding: 8px;
+}
+
+.suggestion-heading {
+  display: block;
+  color: var(--app-text-muted);
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  padding: 8px 10px 5px;
+  text-transform: uppercase;
+}
+
+.suggestion-option {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 9px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--app-text);
+  cursor: pointer;
+  padding: 10px;
+  text-align: start;
+}
+
+.suggestion-option:hover,
+.suggestion-option:focus-visible {
+  background: color-mix(in srgb, var(--brand-red) 9%, transparent);
+}
+
+.suggestion-option mat-icon {
+  color: var(--app-text-muted);
+  font-size: 18px;
+}
+
+.price-field {
+  display: grid;
+  gap: 7px;
+  min-height: 54px;
+  align-content: center;
+  border: 1px solid var(--app-border-strong);
+  border-radius: 8px;
+  background: var(--app-card-raised);
+  padding: 8px 10px;
+}
+
+.price-field > span {
+  color: var(--app-text-muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.price-field > div {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.price-field button {
+  min-height: 30px;
+  border-radius: 4px;
+  color: var(--app-text-muted);
+  font-size: 0.76rem;
+  font-weight: 900;
+}
+
+.price-field button.active {
+  background: color-mix(in srgb, var(--brand-red) 14%, transparent);
+  color: var(--brand-red);
+}
+
+.clear-button,
+.retry-button {
+  min-height: 54px;
+  border-radius: 8px;
+  color: var(--app-text);
+  font-weight: 900;
+}
+
+.result-count {
+  justify-self: end;
+  color: var(--app-text-muted);
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+:host ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+  display: none;
+}
+
+:host ::ng-deep .mat-mdc-text-field-wrapper {
+  min-height: 54px;
+  border-radius: 8px;
+  background: var(--app-card-raised);
+}
+
+:host ::ng-deep .mat-mdc-form-field-infix {
+  min-height: 54px;
+  padding-block: 14px !important;
+}
+
+@media (max-width: 1180px) {
+  .toolbar {
+    position: static;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .search-shell {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 760px) {
+  .toolbar {
+    grid-template-columns: 1fr;
+    padding: 14px;
+  }
+
+  .toolbar-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .clear-button,
+  .retry-button,
+  .result-count {
+    width: 100%;
+  }
+
+  .result-count {
+    justify-self: start;
+  }
+}

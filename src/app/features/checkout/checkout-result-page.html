@@ -1,0 +1,83 @@
+<section class="automotive-page checkout-result-page">
+  <section class="result-shell" [class.success-shell]="isSuccess()" [class.failure-shell]="!isSuccess()" [attr.role]="isSuccess() ? 'status' : 'alert'" aria-live="polite">
+    <div class="result-icon" aria-hidden="true">
+      <span class="material-icons">
+        {{ isSuccess() ? 'check_circle' : 'error' }}
+      </span>
+    </div>
+    <div class="result-content">
+      <span class="result-status">{{ isSuccess() ? ('checkout.paymentComplete' | translate) : ('checkout.actionNeeded' | translate) }}</span>
+      <h1>{{ isSuccess() ? ('checkout.orderConfirmed' | translate) : ('checkout.failed' | translate) }}</h1>
+      @if (isSuccess()) {
+        <p>
+          @if (orderNumber()) {
+            Order {{ orderNumber() }} is now available in your order history.
+          } @else {
+            Your order is now available in your order history.
+          }
+        @if (paymentStatus()) {
+            Payment status: <strong>{{ paymentStatus() }}</strong>.
+          }
+        </p>
+        @if (isSyncingPayment()) {
+          <p role="status">Synchronizing payment with the backend...</p>
+        }
+        @if (paymentSyncError()) {
+          <p class="result-error" role="alert">{{ paymentSyncError() }}</p>
+        }
+        <div class="result-details" aria-label="Order confirmation details">
+          <div>
+            <span>Order number</span>
+            <strong>{{ orderNumber() || 'Available in My Orders' }}</strong>
+          </div>
+          <div>
+            <span>Next step</span>
+            <strong>We will prepare your items</strong>
+          </div>
+        </div>
+        <div class="result-actions">
+          @if (orderId()) {
+            <a class="brand-button" [routerLink]="['/orders', orderId()]">
+              <span class="material-icons" aria-hidden="true">receipt_long</span>
+              {{ 'checkout.viewOrder' | translate }}
+            </a>
+          }
+          <a class="ghost-button" routerLink="/orders">{{ 'checkout.myOrders' | translate }}</a>
+        </div>
+      } @else {
+        <p>{{ reason() || 'The backend rejected the checkout request. Review your cart and shipping details, then try again.' }}</p>
+        @if (isSyncingPayment()) {
+          <p role="status">Synchronizing payment failure with the backend...</p>
+        }
+        @if (paymentSyncError()) {
+          <p class="result-error" role="alert">{{ paymentSyncError() }}</p>
+        }
+        <div class="result-details" aria-label="Checkout recovery details">
+          <div>
+            <span>What happened</span>
+            <strong>Your order was not lost</strong>
+          </div>
+          <div>
+            <span>Recommended</span>
+            <strong>Review payment and try again</strong>
+          </div>
+        </div>
+        <div class="result-actions">
+          @if (orderId()) {
+            <a class="brand-button" [routerLink]="['/orders', orderId()]">
+              <span class="material-icons" aria-hidden="true">refresh</span>
+              {{ 'checkout.retryPayment' | translate }}
+            </a>
+          } @else {
+            <a class="brand-button" routerLink="/cart">
+              <span class="material-icons" aria-hidden="true">shopping_cart</span>
+              {{ 'checkout.returnCart' | translate }}
+            </a>
+          }
+          <a class="ghost-button" routerLink="/cart">{{ 'checkout.reviewCart' | translate }}</a>
+          <a class="ghost-button" routerLink="/products">{{ 'checkout.browseProducts' | translate }}</a>
+        </div>
+      }
+    </div>
+  </section>
+</section>

@@ -1,0 +1,58 @@
+<section class="automotive-page account-page">
+  <header class="page-heading">
+    <span class="eyebrow">
+      <span class="material-icons" aria-hidden="true">favorite</span>
+      {{ 'wishlist.title' | translate }}
+    </span>
+    <h1 class="page-title">{{ 'wishlist.heading' | translate }}</h1>
+    <p class="page-copy">{{ 'wishlist.description' | translate }}</p>
+  </header>
+
+  @if (isLoading()) {
+    <section class="product-grid wishlist-skeleton-grid" aria-label="Loading wishlist" aria-busy="true">
+      @for (skeleton of [1, 2, 3, 4]; track skeleton) {
+        <article class="wishlist-skeleton" aria-hidden="true">
+          <span class="skeleton-block skeleton-image"></span>
+          <span class="skeleton-block short"></span>
+          <span class="skeleton-block"></span>
+          <span class="skeleton-block medium"></span>
+        </article>
+      }
+    </section>
+  } @else if (errorMessage()) {
+    <section class="empty-state" role="alert">
+      <div class="empty-state-content">
+        <span class="feature-icon material-icons" aria-hidden="true">error</span>
+        <h2>{{ 'wishlist.loadError' | translate }}</h2>
+        <p>{{ errorMessage() }}</p>
+        <button type="button" class="brand-button" (click)="loadWishlist()">{{ 'products.retry' | translate }}</button>
+      </div>
+    </section>
+  } @else if (!items().length) {
+    <section class="empty-state">
+      <div class="empty-state-content">
+        <span class="feature-icon material-icons" aria-hidden="true">favorite</span>
+        <h2>{{ 'wishlist.empty' | translate }}</h2>
+        <p>{{ 'wishlist.emptyDescription' | translate }}</p>
+        <a class="brand-button" routerLink="/products">{{ 'wishlist.explore' | translate }}</a>
+      </div>
+    </section>
+  } @else {
+    <section class="product-grid" aria-label="Wishlist products">
+      @for (item of items(); track item.wishlistId; let index = $index) {
+        <app-product-card
+          [product]="item.product"
+          [pending]="pendingProductId() === item.product.productId"
+          [priority]="index === 0"
+          [cartLabel]="'wishlist.moveToCart' | translate"
+          pendingLabel="Moving"
+          wishlistIcon="delete"
+          [wishlistAriaLabel]="'Remove ' + item.product.nameEn + ' from wishlist'"
+          [idSuffix]="'wishlist-' + item.wishlistId"
+          (addToCart)="moveToCart($event.productId)"
+          (addToWishlist)="remove($event.productId)"
+        />
+      }
+    </section>
+  }
+</section>

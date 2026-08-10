@@ -1,0 +1,6 @@
+<a class="category-circle" routerLink="/products" [queryParams]="{ categoryId: category().categoryId }">
+  <span class="category-ring">
+    <span class="category-icon material-icons" aria-hidden="true">{{ icon() }}</span>
+  </span>
+  <strong>{{ category().nameEn }}</strong>
+</a>

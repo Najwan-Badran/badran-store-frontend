@@ -1,0 +1,236 @@
+<section class="automotive-page account-page">
+  <header class="page-heading">
+    <span class="eyebrow">
+      <span class="material-icons" aria-hidden="true">person</span>
+      {{ 'profile.title' | translate }}
+    </span>
+    <h1 class="page-title">{{ 'profile.heading' | translate }}</h1>
+    <p class="page-copy">{{ 'profile.description' | translate }}</p>
+  </header>
+
+  @if (isLoading()) {
+    <section class="empty-state">
+      <div class="empty-state-content">
+        <span class="feature-icon material-icons" aria-hidden="true">sync</span>
+        <h2>{{ 'profile.loading' | translate }}</h2>
+        <p>{{ 'profile.loadingDescription' | translate }}</p>
+      </div>
+    </section>
+  } @else if (errorMessage()) {
+    <section class="empty-state" role="alert">
+      <div class="empty-state-content">
+        <span class="feature-icon material-icons" aria-hidden="true">error</span>
+        <h2>{{ 'profile.loadError' | translate }}</h2>
+        <p>{{ errorMessage() }}</p>
+        <button type="button" class="brand-button" (click)="loadProfile()">Retry</button>
+      </div>
+    </section>
+  } @else if (profile(); as profile) {
+    <section class="profile-grid">
+      <article class="dashboard-panel avatar-panel">
+        <div class="profile-avatar" aria-hidden="true">
+          @if (avatarPreviewUrl() || profile.avatarUrl) {
+            <img [src]="avatarPreviewUrl() || profile.avatarUrl" alt="" />
+          } @else {
+            {{ initials() }}
+          }
+        </div>
+        <div class="profile-identity">
+          <span class="eyebrow">{{ 'profile.account' | translate }}</span>
+          <h2>{{ 'profile.picture' | translate }}</h2>
+          <p>{{ profile.name }}</p>
+          <span>{{ profile.email }}</span>
+        </div>
+        <label class="file-button">
+          <span class="material-icons" aria-hidden="true">upload</span>
+          {{ 'profile.uploadAvatar' | translate }}
+          <input type="file" accept="image/png,image/jpeg,image/webp" (change)="onAvatarSelected($event)" />
+        </label>
+        <div class="avatar-actions">
+          <button type="button" class="brand-button" [disabled]="!avatarPreviewUrl() || isUploadingAvatar()" [attr.aria-busy]="isUploadingAvatar()" (click)="uploadAvatar()">
+            <span class="material-icons" aria-hidden="true">save</span>
+            {{ 'profile.saveAvatar' | translate }}
+          </button>
+          <button type="button" class="ghost-button" [disabled]="isUploadingAvatar()" (click)="removeAvatar()">
+            <span class="material-icons" aria-hidden="true">delete</span>
+            {{ 'profile.removeAvatar' | translate }}
+          </button>
+        </div>
+        @if (avatarMessage()) {
+          <p class="form-message" role="status">{{ avatarMessage() }}</p>
+        }
+      </article>
+
+      <article class="dashboard-panel">
+        <span class="card-icon material-icons" aria-hidden="true">badge</span>
+        <h2>{{ 'profile.identity' | translate }}</h2>
+        <form class="profile-form" [formGroup]="profileForm" (ngSubmit)="saveProfile()" novalidate>
+          <label class="field-shell">
+            <span>{{ 'profile.name' | translate }}</span>
+            <input name="profileName" required type="text" formControlName="name" autocomplete="name" />
+            @if (getProfileError('name')) {
+              <small role="alert">{{ getProfileError('name') }}</small>
+            }
+          </label>
+          <label class="field-shell">
+            <span>{{ 'profile.email' | translate }}</span>
+            <input name="profileEmail" type="email" [value]="profile.email" readonly autocomplete="email" />
+          </label>
+          <label class="field-shell">
+            <span>{{ 'profile.phone' | translate }}</span>
+            <input name="profilePhone" type="tel" formControlName="phone" autocomplete="tel" />
+            @if (getProfileError('phone')) {
+              <small role="alert">{{ getProfileError('phone') }}</small>
+            }
+          </label>
+          <label class="field-shell">
+            <span>{{ 'profile.language' | translate }}</span>
+            <input name="profileLanguage" required type="text" formControlName="preferredLanguage" />
+            @if (getProfileError('preferredLanguage')) {
+              <small role="alert">{{ getProfileError('preferredLanguage') }}</small>
+            }
+          </label>
+          @if (profileSuccessMessage()) {
+            <p class="form-message success" role="status">{{ profileSuccessMessage() }}</p>
+          }
+          <button type="submit" class="brand-button" [disabled]="profileForm.invalid || isSavingProfile()" [attr.aria-busy]="isSavingProfile()">
+            {{ isSavingProfile() ? ('profile.saving' | translate) : ('profile.save' | translate) }}
+          </button>
+        </form>
+      </article>
+
+      <article class="dashboard-panel">
+        <span class="card-icon material-icons" aria-hidden="true">lock_reset</span>
+        <h2>{{ 'profile.changePassword' | translate }}</h2>
+        <p>{{ 'profile.passwordDescription' | translate }}</p>
+        <form class="profile-form" [formGroup]="passwordForm" (ngSubmit)="changePassword()" novalidate>
+          <label class="field-shell">
+            <span>{{ 'profile.newPassword' | translate }}</span>
+            <input name="newPassword" type="password" required autocomplete="new-password" formControlName="newPassword" />
+            @if (getPasswordError('newPassword')) {
+              <small role="alert">{{ getPasswordError('newPassword') }}</small>
+            }
+          </label>
+          <label class="field-shell">
+            <span>{{ 'profile.confirmPassword' | translate }}</span>
+            <input name="confirmPassword" type="password" required autocomplete="new-password" formControlName="confirmPassword" />
+            @if (getPasswordError('confirmPassword')) {
+              <small role="alert">{{ getPasswordError('confirmPassword') }}</small>
+            }
+          </label>
+          <div class="password-meter" [class]="passwordScore()" aria-hidden="true"><span></span></div>
+          <p class="password-hint" [class]="passwordScore()" role="status">{{ passwordValidationMessage() }}</p>
+          @if (passwordSuccessMessage()) {
+            <p class="form-message success" role="status">{{ passwordSuccessMessage() }}</p>
+          }
+          <button type="submit" class="brand-button" [disabled]="passwordForm.invalid || isChangingPassword()" [attr.aria-busy]="isChangingPassword()">
+            {{ isChangingPassword() ? ('profile.changing' | translate) : ('profile.change' | translate) }}
+          </button>
+        </form>
+      </article>
+
+      <article class="dashboard-panel">
+        <span class="card-icon material-icons" aria-hidden="true">language</span>
+        <h2>{{ 'profile.preferences' | translate }}</h2>
+        <dl class="profile-list">
+          <div>
+            <dt>{{ 'profile.language' | translate }}</dt>
+            <dd>{{ profile.preferredLanguage }}</dd>
+          </div>
+        </dl>
+      </article>
+    </section>
+
+    <section class="dashboard-panel addresses-panel" aria-labelledby="addresses-title">
+      <div class="status-row">
+        <div>
+          <span class="eyebrow">{{ 'profile.savedAddresses' | translate }}</span>
+          <h2 id="addresses-title">{{ 'profile.deliveryAddresses' | translate }}</h2>
+        </div>
+      </div>
+
+      <form class="address-form" [formGroup]="addressForm" (ngSubmit)="saveAddress()" novalidate>
+        <label class="field-shell">
+          <span>{{ 'profile.label' | translate }}</span>
+          <input name="addressLabel" type="text" formControlName="label" autocomplete="address-level4" />
+        </label>
+        <label class="field-shell">
+          <span>{{ 'cart.city' | translate }}</span>
+          <input name="addressCity" required type="text" formControlName="city" autocomplete="address-level2" />
+          @if (getAddressError('city')) {
+            <small role="alert">{{ getAddressError('city') }}</small>
+          }
+        </label>
+        <label class="field-shell">
+          <span>{{ 'cart.zone' | translate }}</span>
+          <input name="addressZone" required type="text" formControlName="zone" autocomplete="address-level3" />
+          @if (getAddressError('zone')) {
+            <small role="alert">{{ getAddressError('zone') }}</small>
+          }
+        </label>
+        <label class="field-shell wide-field">
+          <span>{{ 'cart.address' | translate }}</span>
+          <input name="addressLine" required type="text" formControlName="addressLine" autocomplete="street-address" />
+          @if (getAddressError('addressLine')) {
+            <small role="alert">{{ getAddressError('addressLine') }}</small>
+          }
+        </label>
+        <label class="checkbox-field">
+          <input name="addressDefault" type="checkbox" formControlName="isDefault" />
+          {{ 'profile.defaultAddress' | translate }}
+        </label>
+        @if (addressSuccessMessage()) {
+          <p class="form-message success" role="status">{{ addressSuccessMessage() }}</p>
+        }
+        <button type="submit" class="brand-button" [disabled]="addressForm.invalid || isSavingAddress()" [attr.aria-busy]="isSavingAddress()">
+          @if (isSavingAddress()) {
+            {{ 'profile.saving' | translate }}
+          } @else {
+            {{ editingAddressId() ? ('profile.updateAddress' | translate) : ('profile.addAddress' | translate) }}
+          }
+        </button>
+        @if (editingAddressId()) {
+          <button type="button" class="ghost-button" (click)="cancelAddressEdit()">{{ 'profile.cancelEdit' | translate }}</button>
+        }
+      </form>
+
+      @if (profile.addresses.length) {
+        <div class="address-grid">
+          @for (address of profile.addresses; track address.addressId) {
+            <article class="brand-card">
+              <div class="status-row">
+                <h3>{{ address.label || 'Saved address' }}</h3>
+                @if (address.isDefault) {
+                  <span class="status-badge">{{ 'profile.default' | translate }}</span>
+                }
+              </div>
+              <p>{{ address.city }}, {{ address.zone }}</p>
+              <p>{{ address.addressLine }}</p>
+              <div class="address-actions">
+                <button
+                  type="button"
+                  class="ghost-button"
+                  [disabled]="address.isDefault"
+                  (click)="setDefaultAddress(address)"
+                >
+                  <span class="material-icons" aria-hidden="true">check_circle</span>
+                  {{ 'profile.setDefault' | translate }}
+                </button>
+                <button type="button" class="ghost-button" (click)="editAddress(address)">
+                  <span class="material-icons" aria-hidden="true">edit</span>
+                  {{ 'profile.edit' | translate }}
+                </button>
+                <button type="button" class="ghost-button" (click)="deleteAddress(address)">
+                  <span class="material-icons" aria-hidden="true">delete</span>
+                  {{ 'profile.delete' | translate }}
+                </button>
+              </div>
+            </article>
+          }
+        </div>
+      } @else {
+        <p class="muted">{{ 'profile.noAddresses' | translate }}</p>
+      }
+    </section>
+  }
+</section>

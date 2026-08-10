@@ -1,0 +1,11 @@
+<section class="product-grid" aria-label="Products catalog">
+  @for (product of products(); track product.productId; let index = $index) {
+    <app-product-card
+      [product]="product"
+      [pending]="pendingProductId() === product.productId"
+      [priority]="index === 0"
+      (addToCart)="addToCart.emit($event)"
+      (addToWishlist)="addToWishlist.emit($event)"
+    />
+  }
+</section>

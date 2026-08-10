@@ -1,0 +1,125 @@
+<section class="toolbar" aria-label="Product search and filters">
+  <div class="toolbar-heading">
+    <span class="eyebrow">
+      <span class="material-icons" aria-hidden="true">inventory_2</span>
+      {{ 'products.eyebrow' | translate }}
+    </span>
+    <div>
+      <h1>{{ 'products.title' | translate }}</h1>
+      <p>{{ 'products.description' | translate }}</p>
+    </div>
+  </div>
+
+  <div class="search-shell" (focusin)="searchFocused.set(true)" (focusout)="closeSearchSoon()">
+    <mat-form-field class="search-field" appearance="outline">
+      <mat-label>{{ 'products.search' | translate }}</mat-label>
+      <mat-icon matPrefix aria-hidden="true">search</mat-icon>
+      <input
+        matInput
+        type="search"
+        [formControl]="searchControl"
+        autocomplete="off"
+        [attr.aria-label]="'products.search' | translate"
+        [placeholder]="'products.searchPlaceholder' | translate"
+        (input)="onSearchInput(searchControl.value)"
+      />
+      @if (searchControl.value) {
+        <button mat-icon-button matSuffix type="button" aria-label="Clear search" (click)="searchControl.setValue(''); onSearchInput('')">
+          <mat-icon aria-hidden="true">close</mat-icon>
+        </button>
+      }
+    </mat-form-field>
+
+    @if (searchFocused() && (suggestions().length || recentSearches().length)) {
+      <div class="search-suggestions" role="listbox" aria-label="Search suggestions">
+        @if (searchControl.value.trim() && suggestions().length) {
+          <span class="suggestion-heading">Suggestions</span>
+          @for (suggestion of suggestions(); track suggestion) {
+            <button type="button" class="suggestion-option" role="option" (mousedown)="$event.preventDefault()" (click)="selectSuggestion(suggestion)">
+              <mat-icon aria-hidden="true">search</mat-icon>
+              <span>
+                @for (part of highlightParts(suggestion); track $index) {
+                  @if (part.match) { <strong>{{ part.text }}</strong> } @else { {{ part.text }} }
+                }
+              </span>
+            </button>
+          }
+        } @else if (!searchControl.value.trim() && recentSearches().length) {
+          <span class="suggestion-heading">Recent searches</span>
+          @for (recent of recentSearches(); track recent) {
+            <button type="button" class="suggestion-option" role="option" (mousedown)="$event.preventDefault()" (click)="selectSuggestion(recent)">
+              <mat-icon aria-hidden="true">history</mat-icon>
+              <span>{{ recent }}</span>
+            </button>
+          }
+        }
+      </div>
+    }
+  </div>
+
+  <mat-form-field class="sort-field" appearance="outline">
+    <mat-label>{{ 'products.sort' | translate }}</mat-label>
+    <mat-select [value]="sort()" aria-label="Sort products" (selectionChange)="sortChanged.emit($event.value)">
+      @for (option of sortOptions; track option.value) {
+        <mat-option [value]="option.value">{{ option.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field class="filter-field" appearance="outline">
+    <mat-label>{{ 'products.category' | translate }}</mat-label>
+    <mat-select
+      [value]="categoryId()"
+      [disabled]="filterOptionsLoading()"
+      [attr.aria-label]="'products.category' | translate"
+      (selectionChange)="filtersChanged.emit({ categoryId: $event.value })"
+    >
+      <mat-option [value]="null">{{ 'products.allCategories' | translate }}</mat-option>
+      @for (category of categories(); track category.categoryId) {
+        <mat-option [value]="category.categoryId">{{ category.nameEn }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field class="filter-field" appearance="outline">
+    <mat-label>{{ 'products.brand' | translate }}</mat-label>
+    <mat-select
+      [value]="brandId()"
+      [disabled]="filterOptionsLoading()"
+      [attr.aria-label]="'products.brand' | translate"
+      (selectionChange)="filtersChanged.emit({ brandId: $event.value })"
+    >
+      <mat-option [value]="null">{{ 'products.allBrands' | translate }}</mat-option>
+      @for (brand of brands(); track brand.brandId) {
+        <mat-option [value]="brand.brandId">{{ brand.nameEn }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <div class="price-field" aria-label="Price sorting">
+    <span>Price</span>
+    <div>
+      <button mat-button type="button" [class.active]="sort() === 'basePrice:asc'" (click)="sortChanged.emit('basePrice:asc')">Low</button>
+      <button mat-button type="button" [class.active]="sort() === 'basePrice:desc'" (click)="sortChanged.emit('basePrice:desc')">High</button>
+    </div>
+  </div>
+
+  @if (filterOptionsError()) {
+    <button mat-icon-button type="button" class="retry-button" [attr.aria-label]="'products.retry' | translate" (click)="retryOptions.emit()">
+      <mat-icon aria-hidden="true">refresh</mat-icon>
+    </button>
+  }
+
+  <button mat-stroked-button type="button" class="clear-button" (click)="clearRequested.emit()">
+    <mat-icon aria-hidden="true">restart_alt</mat-icon>
+    {{ 'products.reset' | translate }}
+  </button>
+
+  <span class="result-count" aria-live="polite">
+    @if (loading()) {
+      {{ 'products.loading' | translate }}
+    } @else {
+      {{ totalElements() }} {{ 'products.products' | translate }}
+    }
+  </span>
+</section>

@@ -1,0 +1,76 @@
+:host {
+  display: block;
+}
+
+.skeleton-card {
+  pointer-events: none;
+  overflow: hidden;
+  border-radius: var(--app-radius-md);
+}
+
+.product-body {
+  gap: 12px;
+}
+
+.skeleton-card .product-visual {
+  min-height: 230px;
+}
+
+.skeleton-block,
+.skeleton-line,
+.skeleton-action {
+  position: relative;
+  overflow: hidden;
+  background: var(--app-card-raised);
+}
+
+.skeleton-line {
+  display: block;
+  height: 14px;
+  border-radius: 999px;
+}
+
+.skeleton-line.short {
+  width: 44%;
+}
+
+.skeleton-line.medium {
+  width: 68%;
+}
+
+.skeleton-action {
+  display: block;
+  height: 42px;
+  border-radius: 999px;
+}
+
+.skeleton-block::after,
+.skeleton-line::after,
+.skeleton-action::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.16), transparent);
+  animation: shimmer 1.3s infinite;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@media (max-width: 560px) {
+  .skeleton-card .product-visual {
+    min-height: 200px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-block::after,
+  .skeleton-line::after,
+  .skeleton-action::after {
+    animation: none;
+  }
+}

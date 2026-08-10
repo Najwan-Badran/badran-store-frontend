@@ -5,16 +5,26 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:production": "ng build --configuration production",
+    "pree2e": "npm run e2e:seed",
+    "e2e": "env -u NO_COLOR playwright test",
+    "e2e:seed": "node scripts/seed-e2e-users.mjs",
+    "test:ci": "ng test --watch=false",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
   "private": true,
+  "engines": {
+    "node": "^22.22.3 || ^24.15.0 || >=26.0.0"
+  },
   "packageManager": "npm@11.17.0",
   "dependencies": {
+    "@angular/cdk": "^22.0.6",
     "@angular/common": "^22.0.0",
     "@angular/compiler": "^22.0.0",
     "@angular/core": "^22.0.0",
     "@angular/forms": "^22.0.0",
+    "@angular/material": "^22.0.6",
     "@angular/platform-browser": "^22.0.0",
     "@angular/router": "^22.0.0",
     "rxjs": "~7.8.0",
@@ -24,9 +34,23 @@
     "@angular/build": "^22.0.7",
     "@angular/cli": "^22.0.7",
     "@angular/compiler-cli": "^22.0.0",
+    "@playwright/test": "^1.62.0",
+    "@types/node": "^26.1.2",
     "jsdom": "^28.0.0",
     "prettier": "^3.8.1",
     "typescript": "~6.0.2",
     "vitest": "^4.0.8"
+  },
+  "allowScripts": {
+    "@parcel/watcher@2.6.0": true,
+    "esbuild@0.28.1": true,
+    "fsevents@2.3.2": true,
+    "fsevents@2.3.3": true,
+    "lmdb@3.5.4": true,
+    "msgpackr-extract@3.0.4": true
+  },
+  "overrides": {
+    "@hono/node-server": "^2.0.5",
+    "nanoid": "3.3.18"
   }
 }

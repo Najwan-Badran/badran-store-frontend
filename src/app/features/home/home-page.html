@@ -1,0 +1,204 @@
+<section class="automotive-page home-page">
+  <section class="hero-slider" aria-label="Badran featured offers">
+    <div class="hero-track" [style.transform]="heroTrackTransform()">
+      <article class="hero-slide hero-slide-primary">
+        <div class="hero-copy">
+          <span class="hero-section-label">Complete section</span>
+          <span class="hero-kicker">{{ 'home.eyebrow' | translate }}</span>
+          <h1>{{ 'home.title' | translate }}</h1>
+          <p>{{ 'home.description' | translate }}</p>
+          <a class="brand-button" routerLink="/products">
+            {{ 'home.shop' | translate }}
+            <span class="material-icons" aria-hidden="true">arrow_back</span>
+          </a>
+        </div>
+        <div class="hero-product-stage" aria-hidden="true">
+          <app-product-image
+            class="hero-main-product"
+            src="/assets/products/areon-x-4-scents.png"
+            alt=""
+            loading="eager"
+            fetchPriority="high"
+          />
+        </div>
+      </article>
+
+      <article class="hero-slide hero-slide-secondary">
+        <div class="hero-copy">
+          <span class="hero-section-label">Discover section</span>
+          <span class="hero-kicker">Badran Store</span>
+          <h2>Car care supplies for every routine.</h2>
+          <p>Cleaners, accessories, scents, safety kits, and workshop essentials in one responsive storefront.</p>
+          <a class="brand-button" routerLink="/products">
+            View products
+            <span class="material-icons" aria-hidden="true">arrow_back</span>
+          </a>
+        </div>
+        <div class="hero-product-stage" aria-hidden="true">
+          <app-product-image class="hero-main-product" src="/assets/products/car-wash-brush-set.png" alt="" loading="lazy" />
+        </div>
+      </article>
+
+      <article class="hero-slide hero-slide-tertiary">
+        <div class="hero-copy">
+          <span class="hero-section-label">New arrivals</span>
+          <span class="hero-kicker">Fresh arrivals</span>
+          <h2>Everything ready for the next drive.</h2>
+          <p>Browse practical automotive products with clear pricing and fast cart actions.</p>
+          <a class="brand-button" routerLink="/products">
+            Browse catalog
+            <span class="material-icons" aria-hidden="true">arrow_back</span>
+          </a>
+        </div>
+        <div class="hero-product-stage" aria-hidden="true">
+          <app-product-image class="hero-main-product" src="/assets/products/car-safety-driving-kit.png" alt="" loading="lazy" />
+        </div>
+      </article>
+    </div>
+
+    <button type="button" class="slider-arrow slider-prev" aria-label="Previous slide" (click)="showPreviousHeroSlide()">
+      <span class="material-icons" aria-hidden="true">chevron_right</span>
+    </button>
+    <button type="button" class="slider-arrow slider-next" aria-label="Next slide" (click)="showNextHeroSlide()">
+      <span class="material-icons" aria-hidden="true">chevron_left</span>
+    </button>
+    <div class="slider-dots" aria-label="Hero slides">
+      @for (slide of [0, 1, 2]; track slide) {
+        <button
+          type="button"
+          [class.active]="currentHeroSlide() === slide"
+          [attr.aria-label]="'Show slide ' + (slide + 1)"
+          [attr.aria-current]="currentHeroSlide() === slide"
+          (click)="selectHeroSlide(slide)"
+        ></button>
+      }
+    </div>
+  </section>
+
+  <div class="service-strip" aria-label="Store services">
+    <article class="service-item">
+      <span class="service-icon material-icons" aria-hidden="true">local_shipping</span>
+      <div>
+        <strong>Fast Delivery</strong>
+        <span>Prepared quickly for drivers and workshops.</span>
+      </div>
+    </article>
+    <article class="service-item">
+      <span class="service-icon material-icons" aria-hidden="true">payments</span>
+      <div>
+        <strong>Cash on Delivery</strong>
+        <span>Simple checkout with familiar local payment.</span>
+      </div>
+    </article>
+    <article class="service-item">
+      <span class="service-icon material-icons" aria-hidden="true">assignment_return</span>
+      <div>
+        <strong>Easy Returns</strong>
+        <span>Clear support for order issues and replacements.</span>
+      </div>
+    </article>
+  </div>
+
+  <section class="section-header" aria-labelledby="home-categories-title">
+    <div>
+      <span class="eyebrow">{{ 'home.categories' | translate }}</span>
+      <h2 id="home-categories-title">{{ 'home.categoryTitle' | translate }}</h2>
+    </div>
+    <p class="section-copy">
+      Browse the live catalog by the products you use most.
+    </p>
+  </section>
+
+  <section class="category-rail" aria-label="Product categories">
+    @if (homeCategories().length) {
+      @for (category of homeCategories(); track category.categoryId) {
+        <app-category-circle [category]="category" />
+      }
+    } @else {
+      <article class="category-placeholder">
+        <span class="category-icon material-icons" aria-hidden="true">category</span>
+        <strong>Categories</strong>
+      </article>
+    }
+  </section>
+
+  @if (isLoading()) {
+    <section class="product-grid" aria-label="Loading featured products" aria-busy="true">
+      @for (skeleton of [1, 2, 3, 4]; track skeleton) {
+        <article class="home-product-skeleton" aria-hidden="true">
+          <span class="skeleton-block skeleton-image"></span>
+          <span class="skeleton-block skeleton-line short"></span>
+          <span class="skeleton-block skeleton-line"></span>
+          <span class="skeleton-block skeleton-line price-line"></span>
+        </article>
+      }
+    </section>
+  } @else if (errorMessage()) {
+    <section class="empty-state" role="alert">
+      <div class="empty-state-content">
+        <span class="feature-icon material-icons" aria-hidden="true">error</span>
+        <h2>Featured products could not load.</h2>
+        <p>{{ errorMessage() }}</p>
+        <button type="button" class="brand-button" (click)="loadFeaturedProducts()">Retry</button>
+      </div>
+    </section>
+  } @else if (!products().length) {
+    <section class="empty-state">
+      <div class="empty-state-content">
+        <span class="feature-icon material-icons" aria-hidden="true">inventory_2</span>
+        <h2>No products are available.</h2>
+        <p>The backend catalog returned an empty product page.</p>
+      </div>
+    </section>
+  } @else {
+    <section class="section-header" aria-labelledby="featured-products-title">
+      <div>
+        <span class="eyebrow">Featured Products</span>
+        <h2 id="featured-products-title">Picked for premium car care.</h2>
+      </div>
+      <a class="section-link" routerLink="/products">
+        View all
+        <span class="material-icons" aria-hidden="true">arrow_forward</span>
+      </a>
+    </section>
+
+    <section class="product-grid" aria-label="Featured Products">
+      @for (product of featuredProducts(); track product.productId; let productIndex = $index) {
+        <app-product-card
+          [product]="product"
+          [pending]="pendingProductId() === product.productId"
+          [priority]="productIndex === 0"
+          [idSuffix]="'home-featured-' + productIndex"
+          (addToCart)="addToCart($event)"
+          (addToWishlist)="addToWishlist($event)"
+        />
+      }
+    </section>
+  }
+
+  @if (popularBrands().length) {
+    <section class="section-header" aria-labelledby="popular-brands-title">
+      <div>
+        <span class="eyebrow">Popular Brands</span>
+        <h2 id="popular-brands-title">Trusted names in the garage.</h2>
+      </div>
+      <a class="section-link" routerLink="/products">
+        View all
+        <span class="material-icons" aria-hidden="true">arrow_forward</span>
+      </a>
+    </section>
+
+    <section class="brand-rail" aria-label="Popular brands">
+      @for (brand of popularBrands(); track brand.brandId) {
+        <a class="brand-logo-card" routerLink="/products" [queryParams]="{ brandId: brand.brandId }">
+          @if (brand.logoUrl) {
+            <img [src]="brand.logoUrl" [alt]="brand.nameEn" />
+          } @else {
+            <span>{{ brand.nameEn.slice(0, 2) }}</span>
+          }
+          <strong>{{ brand.nameEn }}</strong>
+        </a>
+      }
+    </section>
+  }
+</section>

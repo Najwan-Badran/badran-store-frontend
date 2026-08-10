@@ -1,0 +1,540 @@
+{
+  "dbCounts": {
+    "products": 49,
+    "activeProducts": 44,
+    "featuredProducts": 8,
+    "categories": 111,
+    "brands": 31,
+    "images": 44,
+    "activeProductsWithoutImages": 0
+  },
+  "apiSummary": {
+    "featured": {
+      "status": 200,
+      "count": 8,
+      "total": 8
+    },
+    "products": {
+      "status": 200,
+      "count": 12,
+      "total": 44
+    },
+    "productDetails": {
+      "status": 200,
+      "productId": 44
+    },
+    "categories": {
+      "statuses": [
+        200,
+        200
+      ],
+      "loaded": 111,
+      "total": 111
+    },
+    "brands": {
+      "status": 200,
+      "count": 31,
+      "total": 31
+    }
+  },
+  "networkSummary": {
+    "requestCount": 705,
+    "failedResponses": [],
+    "requestFailures": [],
+    "consoleErrors": [],
+    "pageErrors": []
+  },
+  "screens": {
+    "home": {
+      "screenshot": "/Users/najwanbadran/Desktop/badran-store-frontend/.codex/browser-evidence/01-home-working.png",
+      "cards": [
+        {
+          "title": "Premium Car Shampoo",
+          "price": "₪35.00",
+          "category": true,
+          "brand": true,
+          "stock": true,
+          "imageSrc": "/assets/products/green-shampoo-jug.png",
+          "imageComplete": true,
+          "imageWidth": 1254
+        },
+        {
+          "title": "Areon X Vanilla",
+          "price": "₪0.00",
+          "category": true,
+          "brand": true,
+          "stock": true,
+          "imageSrc": "/assets/products/areon-x-4-scents.png",
+          "imageComplete": true,
+          "imageWidth": 1254
+        },
+        {
+          "title": "Areon X Bubble Gum",
+          "price": "₪0.00",
+          "category": true,
+          "brand": true,
+          "stock": true,
+          "imageSrc": "/assets/products/areon-x-4-scents.png",
+          "imageComplete": true,
+          "imageWidth": 1254
+        },
+        {
+          "title": "Rugina Car X Strawberry",
+          "price": "₪0.00",
+          "category": true,
+          "brand": true,
+          "stock": true,
+          "imageSrc": "/assets/products/air-freshener-spray-bundle.png",
+          "imageComplete": true,
+          "imageWidth": 1254
+        },
+        {
+          "title": "KXXIN Dian Zi Warning Alarm Electronic Horn",
+          "price": "₪0.00",
+          "category": true,
+          "brand": true,
+          "stock": true,
+          "imageSrc": "/assets/products/warning-alarm-electronic-horn.png",
+          "imageComplete": true,
+          "imageWidth": 1254
+        },
+        {
+          "title": "Alteco AP6200",
+          "price": "₪0.00",
+          "category": true,
+          "brand": true,
+          "stock": true,
+          "imageSrc": "/assets/products/alteco-ap6200-glue-set.png",
+          "imageComplete": true,
+          "imageWidth": 1254
+        },
+        {
+          "title": "Brush Five Sets",
+          "price": "₪0.00",
+          "category": true,
+          "brand": true,
+          "stock": true,
+          "imageSrc": "/assets/products/five-detailing-brush-set.png",
+          "imageComplete": true,
+          "imageWidth": 1254
+        },
+        {
+          "title": "Car Commerce 12V 1-Piston Car Compressor",
+          "price": "₪0.00",
+          "category": true,
+          "brand": true,
+          "stock": true,
+          "imageSrc": "/assets/products/12v-car-compressor-box.png",
+          "imageComplete": true,
+          "imageWidth": 1254
+        }
+      ],
+      "categoriesVisible": 10
+    },
+    "products": {
+      "screenshot": "/Users/najwanbadran/Desktop/badran-store-frontend/.codex/browser-evidence/03-product-list-visible.png",
+      "cards": [
+        {
+          "title": "Car Commerce 12V 1-Piston Car Compressor",
+          "price": "₪0.00",
+          "category": true,
+          "brand": true,
+          "stock": true,
+          "imageSrc": "/assets/products/12v-car-compressor-box.png",
+          "imageComplete": true,
+          "imageWidth": 1254
+        },
+        {
+          "title": "AM/FM Antenna",
+          "price": "₪0.00",
+          "category": true,
+          "brand": true,
+          "stock": true,
+          "imageSrc": "/assets/products/car-keychains-and-antenna-set.png",
+          "imageComplete": true,
+          "imageWidth": 1254
+        },
+        {
+          "title": "Brush Five Sets",
+          "price": "₪0.00",
+          "category": true,
+          "brand": true,
+          "stock": true,
+          "imageSrc": "/assets/products/five-detailing-brush-set.png",
+          "imageComplete": true,
+          "imageWidth": 1254
+        },
+        {
+          "title": "Car Sealing Strip 5m",
+          "price": "₪0.00",
+          "category": true,
+          "brand": true,
+          "stock": true,
+          "imageSrc": "/assets/products/door-seal-rolls-4-colors.png",
+          "imageComplete": true,
+          "imageWidth": 1254
+        },
+        {
+          "title": "Alteco AP6200",
+          "price": "₪0.00",
+          "category": true,
+          "brand": true,
+          "stock": true,
+          "imageSrc": "/assets/products/alteco-ap6200-glue-set.png",
+          "imageComplete": true,
+          "imageWidth": 1254
+        },
+        {
+          "title": "KXXIN Dian Zi Warning Alarm Electronic Horn",
+          "price": "₪0.00",
+          "category": true,
+          "brand": true,
+          "stock": true,
+          "imageSrc": "/assets/products/warning-alarm-electronic-horn.png",
+          "imageComplete": true,
+          "imageWidth": 1254
+        },
+        {
+          "title": "Zohar Dalia Formula 77 18L",
+          "price": "₪0.00",
+          "category": true,
+          "brand": true,
+          "stock": true,
+          "imageSrc": "/assets/products/formula-77-blue-jug.png",
+          "imageComplete": true,
+          "imageWidth": 1254
+        },
+        {
+          "title": "STP Dakhli Sky 18L",
+          "price": "₪0.00",
+          "category": true,
+          "brand": true,
+          "stock": true,
+          "imageSrc": "/assets/products/dark-cleaner-jug.png",
+          "imageComplete": true,
+          "imageWidth": 1254
+        },
+        {
+          "title": "Everest Silicone 18L",
+          "price": "₪0.00",
+          "category": true,
+          "brand": true,
+          "stock": true,
+          "imageSrc": "/assets/products/everest-silicone-jug.png",
+          "imageComplete": true,
+          "imageWidth": 1254
+        },
+        {
+          "title": "D2000 18L",
+          "price": "₪0.00",
+          "category": true,
+          "brand": true,
+          "stock": true,
+          "imageSrc": "/assets/products/d2000-orange-jug.png",
+          "imageComplete": true,
+          "imageWidth": 1254
+        },
+        {
+          "title": "Everest Skye 400 18L",
+          "price": "₪0.00",
+          "category": true,
+          "brand": true,
+          "stock": true,
+          "imageSrc": "/assets/products/everest-skye-400-jug.png",
+          "imageComplete": true,
+          "imageWidth": 1254
+        },
+        {
+          "title": "Leyo Homer 18L",
+          "price": "₪0.00",
+          "category": true,
+          "brand": true,
+          "stock": true,
+          "imageSrc": "/assets/products/pink-dumer-jug.png",
+          "imageComplete": true,
+          "imageWidth": 1254
+        }
+      ],
+      "resultCountText": "44 products",
+      "paginationText": "chevron_left\nPrevious\n1\n2\n3\n4\nchevron_right\nNext\n44 products"
+    },
+    "search": {
+      "screenshot": "/Users/najwanbadran/Desktop/badran-store-frontend/.codex/browser-evidence/04-search-visible.png",
+      "cards": [
+        {
+          "title": "Areon X Sticks Black Ice 80ml",
+          "price": "₪0.00",
+          "category": true,
+          "brand": true,
+          "stock": true,
+          "imageSrc": "/assets/products/areon-x-sticks-display-box.png",
+          "imageComplete": true,
+          "imageWidth": 1254
+        },
+        {
+          "title": "Areon Car and Home Tutti Frutti",
+          "price": "₪0.00",
+          "category": true,
+          "brand": true,
+          "stock": true,
+          "imageSrc": "/assets/products/air-freshener-spray-bundle.png",
+          "imageComplete": true,
+          "imageWidth": 1254
+        },
+        {
+          "title": "Areon Car and Home New Car",
+          "price": "₪0.00",
+          "category": true,
+          "brand": true,
+          "stock": true,
+          "imageSrc": "/assets/products/air-freshener-spray-bundle.png",
+          "imageComplete": true,
+          "imageWidth": 1254
+        },
+        {
+          "title": "Areon Car and Home Vanilla",
+          "price": "₪0.00",
+          "category": true,
+          "brand": true,
+          "stock": true,
+          "imageSrc": "/assets/products/air-freshener-spray-bundle.png",
+          "imageComplete": true,
+          "imageWidth": 1254
+        },
+        {
+          "title": "Areon Car and Home Bubble Gum",
+          "price": "₪0.00",
+          "category": true,
+          "brand": true,
+          "stock": true,
+          "imageSrc": "/assets/products/air-freshener-spray-bundle.png",
+          "imageComplete": true,
+          "imageWidth": 1254
+        },
+        {
+          "title": "Areon X Summer Dream",
+          "price": "₪0.00",
+          "category": true,
+          "brand": true,
+          "stock": true,
+          "imageSrc": "/assets/products/areon-x-4-scents.png",
+          "imageComplete": true,
+          "imageWidth": 1254
+        },
+        {
+          "title": "Areon X Coconut",
+          "price": "₪0.00",
+          "category": true,
+          "brand": true,
+          "stock": true,
+          "imageSrc": "/assets/products/areon-x-4-scents.png",
+          "imageComplete": true,
+          "imageWidth": 1254
+        },
+        {
+          "title": "Areon X Bubble Gum",
+          "price": "₪0.00",
+          "category": true,
+          "brand": true,
+          "stock": true,
+          "imageSrc": "/assets/products/areon-x-4-scents.png",
+          "imageComplete": true,
+          "imageWidth": 1254
+        },
+        {
+          "title": "Areon X Vanilla",
+          "price": "₪0.00",
+          "category": true,
+          "brand": true,
+          "stock": true,
+          "imageSrc": "/assets/products/areon-x-4-scents.png",
+          "imageComplete": true,
+          "imageWidth": 1254
+        },
+        {
+          "title": "Areon Smile Black Crystal",
+          "price": "₪0.00",
+          "category": true,
+          "brand": true,
+          "stock": true,
+          "imageSrc": "/assets/products/air-freshener-spray-bundle.png",
+          "imageComplete": true,
+          "imageWidth": 1254
+        },
+        {
+          "title": "Areon Smile Tutti Frutti",
+          "price": "₪0.00",
+          "category": true,
+          "brand": true,
+          "stock": true,
+          "imageSrc": "/assets/products/air-freshener-spray-bundle.png",
+          "imageComplete": true,
+          "imageWidth": 1254
+        },
+        {
+          "title": "Areon Smile Summer Dream",
+          "price": "₪0.00",
+          "category": true,
+          "brand": true,
+          "stock": true,
+          "imageSrc": "/assets/products/air-freshener-spray-bundle.png",
+          "imageComplete": true,
+          "imageWidth": 1254
+        }
+      ],
+      "resultCountText": "15 products"
+    },
+    "categoryProducts": {
+      "screenshot": "/Users/najwanbadran/Desktop/badran-store-frontend/.codex/browser-evidence/02-categories-visible.png",
+      "cards": [
+        {
+          "title": "Rugina Car X Ocean",
+          "price": "₪0.00",
+          "category": true,
+          "brand": true,
+          "stock": true,
+          "imageSrc": "/assets/products/air-freshener-spray-bundle.png",
+          "imageComplete": true,
+          "imageWidth": 1254
+        },
+        {
+          "title": "Rugina Car X Apple",
+          "price": "₪0.00",
+          "category": true,
+          "brand": true,
+          "stock": true,
+          "imageSrc": "/assets/products/air-freshener-spray-bundle.png",
+          "imageComplete": true,
+          "imageWidth": 1254
+        },
+        {
+          "title": "Rugina Car X Black Ice",
+          "price": "₪0.00",
+          "category": true,
+          "brand": true,
+          "stock": true,
+          "imageSrc": "/assets/products/air-freshener-spray-bundle.png",
+          "imageComplete": true,
+          "imageWidth": 1254
+        },
+        {
+          "title": "Rugina Car X Bubble Gum",
+          "price": "₪0.00",
+          "category": true,
+          "brand": true,
+          "stock": true,
+          "imageSrc": "/assets/products/air-freshener-spray-bundle.png",
+          "imageComplete": true,
+          "imageWidth": 1254
+        },
+        {
+          "title": "Rugina Car X Coconut",
+          "price": "₪0.00",
+          "category": true,
+          "brand": true,
+          "stock": true,
+          "imageSrc": "/assets/products/air-freshener-spray-bundle.png",
+          "imageComplete": true,
+          "imageWidth": 1254
+        },
+        {
+          "title": "Rugina Car X Lemon",
+          "price": "₪0.00",
+          "category": true,
+          "brand": true,
+          "stock": true,
+          "imageSrc": "/assets/products/air-freshener-spray-bundle.png",
+          "imageComplete": true,
+          "imageWidth": 1254
+        },
+        {
+          "title": "Rugina Car X Strawberry",
+          "price": "₪0.00",
+          "category": true,
+          "brand": true,
+          "stock": true,
+          "imageSrc": "/assets/products/air-freshener-spray-bundle.png",
+          "imageComplete": true,
+          "imageWidth": 1254
+        },
+        {
+          "title": "Areon X Summer Dream",
+          "price": "₪0.00",
+          "category": true,
+          "brand": true,
+          "stock": true,
+          "imageSrc": "/assets/products/areon-x-4-scents.png",
+          "imageComplete": true,
+          "imageWidth": 1254
+        },
+        {
+          "title": "Areon X Coconut",
+          "price": "₪0.00",
+          "category": true,
+          "brand": true,
+          "stock": true,
+          "imageSrc": "/assets/products/areon-x-4-scents.png",
+          "imageComplete": true,
+          "imageWidth": 1254
+        },
+        {
+          "title": "Areon X Bubble Gum",
+          "price": "₪0.00",
+          "category": true,
+          "brand": true,
+          "stock": true,
+          "imageSrc": "/assets/products/areon-x-4-scents.png",
+          "imageComplete": true,
+          "imageWidth": 1254
+        },
+        {
+          "title": "Areon X Vanilla",
+          "price": "₪0.00",
+          "category": true,
+          "brand": true,
+          "stock": true,
+          "imageSrc": "/assets/products/areon-x-4-scents.png",
+          "imageComplete": true,
+          "imageWidth": 1254
+        },
+        {
+          "title": "Areon Smile Black Crystal",
+          "price": "₪0.00",
+          "category": true,
+          "brand": true,
+          "stock": true,
+          "imageSrc": "/assets/products/air-freshener-spray-bundle.png",
+          "imageComplete": true,
+          "imageWidth": 1254
+        }
+      ],
+      "resultCountText": "17 products"
+    },
+    "details": {
+      "screenshot": "/Users/najwanbadran/Desktop/badran-store-frontend/.codex/browser-evidence/05-product-details-visible.png",
+      "title": "Car Commerce 12V 1-Piston Car Compressor",
+      "imageCount": 1
+    },
+    "wishlist": {
+      "screenshot": "/Users/najwanbadran/Desktop/badran-store-frontend/.codex/browser-evidence/07-wishlist-working.png",
+      "cards": [
+        {
+          "title": "Car Commerce 12V 1-Piston Car Compressor",
+          "price": "₪0.00",
+          "category": true,
+          "brand": true,
+          "stock": true,
+          "imageSrc": "/assets/products/12v-car-compressor-box.png",
+          "imageComplete": true,
+          "imageWidth": 1254
+        }
+      ]
+    },
+    "cart": {
+      "screenshot": "/Users/najwanbadran/Desktop/badran-store-frontend/.codex/browser-evidence/06-cart-working.png",
+      "lines": 1,
+      "lineText": "Car Commerce 12V 1-Piston Car Compressor\nCAR-COMMERCE-COMPRESSOR-12V\n₪0.00\nQTY\ndelete\nRemove",
+      "imageCount": 1
+    }
+  }
+}

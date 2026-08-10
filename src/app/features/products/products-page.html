@@ -1,0 +1,59 @@
+<section class="automotive-page products-page">
+  <app-product-toolbar
+    [search]="state().search"
+    [sort]="state().sort"
+    [totalElements]="products().length"
+    [suggestions]="searchSuggestions()"
+    [recentSearches]="recentSearches()"
+    [categories]="categories()"
+    [brands]="brands()"
+    [categoryId]="state().categoryId"
+    [brandId]="state().brandId"
+    [filterOptionsLoading]="filterOptionsLoading()"
+    [filterOptionsError]="filterOptionsError()"
+    [loading]="isLoading()"
+    (searchInput)="onSearchInput($event)"
+    (searchChanged)="onSearchChanged($event)"
+    (sortChanged)="onSortChanged($event)"
+    (filtersChanged)="onFiltersChanged($event)"
+    (retryOptions)="retryFilterOptions()"
+    (clearRequested)="clearFilters()"
+  />
+
+  <div class="catalog-results">
+      @if (isLoading()) {
+        <app-product-skeleton-loader [count]="state().size" />
+      } @else if (errorMessage()) {
+        <app-product-empty-state
+          icon="error"
+          title="Catalog could not load."
+          [message]="errorMessage() ?? 'The catalog request could not be completed.'"
+          actionLabel="Retry"
+          [alert]="true"
+          (action)="retryProducts()"
+        />
+      } @else if (!products().length) {
+        <app-product-empty-state
+          icon="inventory_2"
+          title="No products match this search."
+          message="Adjust the search, category, brand, or sorting controls and try again."
+          [actionLabel]="hasActiveFilters() ? 'Reset Filters' : null"
+          (action)="clearFilters()"
+        />
+      } @else {
+        <app-product-grid
+          [products]="products()"
+          [pendingProductId]="pendingProductId()"
+          (addToCart)="addToCart($event)"
+          (addToWishlist)="addToWishlist($event)"
+        />
+
+        <app-product-pagination
+          [pageIndex]="currentPage()"
+          [totalPages]="totalPages()"
+          [totalElements]="totalElements()"
+          (pageChanged)="onPageChanged($event)"
+        />
+      }
+  </div>
+</section>

@@ -1,0 +1,12 @@
+<section class="empty-state" [attr.role]="alert() ? 'alert' : null">
+  <div class="empty-state-content">
+    <span class="feature-icon material-icons" aria-hidden="true">{{ icon() }}</span>
+    <h2>{{ title() }}</h2>
+    <p>{{ message() }}</p>
+    @if (actionLabel(); as label) {
+      <button mat-flat-button color="primary" type="button" (click)="action.emit()">
+        {{ label }}
+      </button>
+    }
+  </div>
+</section>

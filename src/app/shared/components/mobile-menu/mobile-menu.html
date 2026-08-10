@@ -1,0 +1,49 @@
+<div class="mobile-menu">
+  <div class="mobile-menu-header">
+    <img class="mobile-brand-logo" src="/assets/badran-logo-transparent.png" alt="" aria-hidden="true" />
+    <span>
+      <strong>Badran Store</strong>
+      <small>Automotive supply</small>
+    </span>
+  </div>
+
+  <app-navigation orientation="mobile" (navigated)="close()" />
+
+  <mat-divider />
+
+  @if (isAuthenticated()) {
+    <section class="account-summary" aria-label="Signed in account">
+      <mat-icon aria-hidden="true">account_circle</mat-icon>
+      <strong>{{ displayName() }}</strong>
+      @if (user()?.email) {
+        <span>{{ user()?.email }}</span>
+      }
+    </section>
+
+    <a mat-button routerLink="/profile" (click)="close()">
+      <mat-icon aria-hidden="true">person</mat-icon>
+      <span>{{ 'nav.profile' | translate }}</span>
+    </a>
+    <a mat-button routerLink="/orders" (click)="close()">
+      <mat-icon aria-hidden="true">receipt_long</mat-icon>
+      <span>{{ 'nav.orders' | translate }}</span>
+    </a>
+    <button mat-button type="button" (click)="logout()">
+      <mat-icon aria-hidden="true">logout</mat-icon>
+      <span>{{ 'nav.logout' | translate }}</span>
+    </button>
+    <button mat-button type="button" (click)="logoutAll()">
+      <mat-icon aria-hidden="true">logout</mat-icon>
+      <span>Logout all devices</span>
+    </button>
+  } @else {
+    <a mat-button routerLink="/login" (click)="close()">
+      <mat-icon aria-hidden="true">login</mat-icon>
+      <span>{{ 'nav.login' | translate }}</span>
+    </a>
+    <a mat-button routerLink="/register" (click)="close()">
+      <mat-icon aria-hidden="true">person_add</mat-icon>
+      <span>{{ 'nav.register' | translate }}</span>
+    </a>
+  }
+</div>

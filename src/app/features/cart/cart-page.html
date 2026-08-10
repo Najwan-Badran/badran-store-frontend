@@ -1,0 +1,299 @@
+<section class="automotive-page account-page">
+  <header class="page-heading">
+    <span class="eyebrow">
+      <span class="material-icons" aria-hidden="true">shopping_cart</span>
+      {{ 'cart.title' | translate }}
+    </span>
+    <h1 class="page-title">{{ 'cart.heading' | translate }}</h1>
+    <p class="page-copy">{{ 'cart.description' | translate }}</p>
+  </header>
+
+  <nav class="checkout-steps" aria-label="Checkout progress">
+    <span class="checkout-step" [class.active]="checkoutStep() >= 1" [class.current]="checkoutStep() === 1"><b>1</b><span>{{ 'cart.review' | translate }}</span></span>
+    <span class="step-line" [class.active]="checkoutStep() >= 2"></span>
+    <span class="checkout-step" [class.active]="checkoutStep() >= 2" [class.current]="checkoutStep() === 2"><b>2</b><span>{{ 'cart.deliveryPayment' | translate }}</span></span>
+    <span class="step-line" [class.active]="checkoutStep() >= 3"></span>
+    <span class="checkout-step" [class.active]="checkoutStep() >= 3" [class.current]="checkoutStep() === 3"><b>3</b><span>{{ 'cart.confirmation' | translate }}</span></span>
+  </nav>
+
+  @if (isLoading()) {
+    <section class="cart-layout" aria-label="Loading cart" aria-busy="true">
+      <article class="empty-state">
+        <div class="empty-state-content">
+          <span class="feature-icon material-icons" aria-hidden="true">sync</span>
+          <h2>{{ 'cart.loading' | translate }}</h2>
+          <p>{{ 'cart.syncing' | translate }}</p>
+        </div>
+      </article>
+    </section>
+  } @else if (errorMessage()) {
+    <section class="empty-state" role="alert">
+      <div class="empty-state-content">
+        <span class="feature-icon material-icons" aria-hidden="true">error</span>
+        <h2>{{ 'cart.loadError' | translate }}</h2>
+        <p>{{ errorMessage() }}</p>
+        <button type="button" class="brand-button" (click)="loadCart()">Retry</button>
+      </div>
+    </section>
+  } @else if (!lines().length) {
+    <section class="cart-layout">
+      <article class="empty-state">
+        <div class="empty-state-content">
+          <span class="feature-icon material-icons" aria-hidden="true">shopping_cart</span>
+          <h2>{{ 'cart.firstProduct' | translate }}</h2>
+          <p>{{ 'cart.firstProductDescription' | translate }}</p>
+          <a class="brand-button" routerLink="/products">{{ 'cart.browseProducts' | translate }}</a>
+        </div>
+      </article>
+
+      <aside class="dashboard-panel summary-panel" aria-label="Cart summary">
+        <span class="eyebrow">{{ 'cart.checkout' | translate }}</span>
+        <div class="summary-line">
+          <span>{{ 'cart.subtotal' | translate }}</span>
+          <strong>{{ 0 | currency: 'ILS' }}</strong>
+        </div>
+        <div class="summary-line">
+          <span>{{ 'cart.items' | translate }}</span>
+          <strong>0</strong>
+        </div>
+        <div class="summary-line">
+          <span>{{ 'cart.checkout' | translate }}</span>
+          <strong>Awaiting products</strong>
+        </div>
+      </aside>
+    </section>
+  } @else {
+    <section class="cart-layout">
+      <article class="dashboard-panel cart-lines" aria-label="Cart items">
+          <div class="status-row cart-heading-row">
+            <div>
+              <span class="eyebrow">{{ 'cart.items' | translate }}</span>
+              <h2>{{ summary().itemCount }} {{ 'nav.products' | translate }}</h2>
+            </div>
+            <button type="button" class="ghost-button" (click)="clearCart()">
+              <span class="material-icons" aria-hidden="true">delete_sweep</span>
+              {{ 'cart.clear' | translate }}
+            </button>
+          </div>
+
+        @for (line of lines(); track line.productId) {
+          <div class="cart-line" [class.quantity-updated]="pendingProductId() === line.productId">
+            <a class="line-media" [routerLink]="['/products', line.productId]" [attr.aria-label]="'View product ' + line.productId">
+              <app-product-image
+                [src]="productImage(line.product)"
+                [alt]="line.product?.nameEn || 'Product ' + line.productId"
+                loading="lazy"
+                [compact]="true"
+              />
+            </a>
+            <div class="line-copy">
+              <h3>
+                @if (line.product) {
+                  <a [routerLink]="['/products', line.productId]">{{ line.product.nameEn }}</a>
+                } @else {
+                  Product #{{ line.productId }}
+                }
+              </h3>
+              <span>{{ line.product?.sku || 'Product details unavailable' }}</span>
+              <strong>{{ line.lineTotal | currency: 'ILS' : 'symbol' : '1.2-2' }}</strong>
+            </div>
+            <label class="quantity-control">
+              <span>{{ 'cart.quantity' | translate }}</span>
+              <input
+                type="number"
+                min="0"
+                [attr.max]="line.product?.stockQuantity ?? null"
+                [disabled]="pendingProductId() === line.productId"
+                [ngModel]="line.quantity"
+                (ngModelChange)="updateQuantity(line, $event)"
+                [attr.aria-label]="'Quantity for product ' + line.productId"
+              />
+            </label>
+            <button
+              type="button"
+              class="ghost-button remove-button"
+              [disabled]="pendingProductId() === line.productId"
+              (click)="removeItem(line)"
+            >
+              <span class="material-icons" aria-hidden="true">delete</span>
+              {{ 'cart.remove' | translate }}
+            </button>
+          </div>
+        }
+      </article>
+
+      <aside class="dashboard-panel summary-panel" aria-label="Cart summary">
+        <span class="eyebrow">{{ 'cart.checkout' | translate }}</span>
+
+        <div class="shipping-progress" aria-live="polite">
+          <div class="shipping-progress-heading">
+            <span class="material-icons" aria-hidden="true">local_shipping</span>
+            @if (shippingRemaining() > 0) {
+              <strong>{{ shippingRemaining() | currency: 'ILS' : 'symbol' : '1.0-0' }} {{ 'cart.leftForShipping' | translate }}</strong>
+            } @else {
+              <strong>{{ 'cart.freeShipping' | translate }}</strong>
+            }
+          </div>
+          <div class="shipping-track" role="progressbar" [attr.aria-valuenow]="shippingProgress()" aria-valuemin="0" aria-valuemax="100">
+            <span [style.width.%]="shippingProgress()"></span>
+          </div>
+          <small>{{ 'cart.freeShippingOver' | translate }} {{ freeShippingThreshold | currency: 'ILS' : 'symbol' : '1.0-0' }}</small>
+        </div>
+
+        <label class="field-shell">
+          <span>{{ 'cart.fulfillment' | translate }}</span>
+          <select name="fulfillmentMethod" [ngModel]="fulfillmentMethod()" (ngModelChange)="setFulfillmentMethod($event)">
+            <option value="home_delivery">{{ 'cart.homeDelivery' | translate }}</option>
+            <option value="pickup">{{ 'cart.pickup' | translate }}</option>
+          </select>
+        </label>
+
+        @if (fulfillmentMethod() === 'home_delivery') {
+          @if (addresses().length) {
+            <label class="field-shell">
+            <span>{{ 'cart.savedAddress' | translate }}</span>
+              <select
+                name="deliveryAddressId"
+                [ngModel]="selectedAddressId()"
+                (ngModelChange)="selectAddress($event)"
+              >
+                <option [ngValue]="null">{{ 'cart.manualAddress' | translate }}</option>
+                @for (address of addresses(); track address.addressId) {
+                  <option [ngValue]="address.addressId">
+                    {{ address.label || address.city + ', ' + address.zone }}
+                  </option>
+                }
+              </select>
+            </label>
+          }
+          <label class="field-shell">
+            <span>{{ 'cart.city' | translate }}</span>
+            <input
+              name="deliveryCity"
+              type="text"
+              required
+              autocomplete="address-level2"
+              [attr.aria-invalid]="deliveryFieldError('city') ? 'true' : null"
+              [ngModel]="deliveryCity()"
+              (ngModelChange)="updateDeliveryCity($event)"
+            />
+            @if (deliveryFieldError('city')) {
+              <small role="alert">{{ deliveryFieldError('city') }}</small>
+            }
+          </label>
+          <label class="field-shell">
+            <span>{{ 'cart.zone' | translate }}</span>
+            <input
+              name="deliveryZone"
+              type="text"
+              required
+              autocomplete="address-level3"
+              [attr.aria-invalid]="deliveryFieldError('zone') ? 'true' : null"
+              [ngModel]="deliveryZone()"
+              (ngModelChange)="updateDeliveryZone($event)"
+            />
+            @if (deliveryFieldError('zone')) {
+              <small role="alert">{{ deliveryFieldError('zone') }}</small>
+            }
+          </label>
+          <label class="field-shell">
+            <span>{{ 'cart.address' | translate }}</span>
+            <input
+              name="deliveryAddressLine"
+              type="text"
+              required
+              autocomplete="street-address"
+              [attr.aria-invalid]="deliveryFieldError('addressLine') ? 'true' : null"
+              [ngModel]="deliveryAddressLine()"
+              (ngModelChange)="updateDeliveryAddressLine($event)"
+            />
+            @if (deliveryFieldError('addressLine')) {
+              <small role="alert">{{ deliveryFieldError('addressLine') }}</small>
+            }
+          </label>
+        }
+
+        <label class="field-shell">
+          <span>{{ 'cart.payment' | translate }}</span>
+          <select name="paymentMethod" [ngModel]="paymentMethod()" (ngModelChange)="setPaymentMethod($event)">
+            <option value="cod">{{ 'cart.cashOnDelivery' | translate }}</option>
+            <option value="card">{{ 'cart.cardStripe' | translate }}</option>
+            <option value="bank_transfer">{{ 'cart.bankTransfer' | translate }}</option>
+          </select>
+          <span class="payment-icons" aria-label="Supported payment methods">
+            <span class="payment-icon">VISA</span>
+            <span class="payment-icon">MC</span>
+            <span class="payment-icon">COD</span>
+          </span>
+        </label>
+        @if (paymentMethod() === 'card') {
+          <p class="form-hint neutral" role="status">{{ 'cart.stripeNote' | translate }}</p>
+        } @else if (paymentMethod() === 'bank_transfer') {
+          <p class="form-hint neutral" role="status">{{ 'cart.bankNote' | translate }}</p>
+        }
+
+        <label class="field-shell">
+          <span>{{ 'cart.coupon' | translate }}</span>
+          <div class="coupon-control">
+            <input
+              name="couponCode"
+              type="text"
+              autocomplete="off"
+              [attr.aria-invalid]="couponState() === 'invalid'"
+              [attr.aria-busy]="couponState() === 'loading'"
+              [ngModel]="couponCode()"
+              (ngModelChange)="updateCouponCode($event)"
+            />
+            <button type="button" class="ghost-button" [disabled]="couponState() === 'loading'" (click)="applyCoupon()">
+              {{ couponState() === 'loading' ? ('cart.checking' | translate) : ('cart.apply' | translate) }}
+            </button>
+          </div>
+        </label>
+        @if (couponMessage()) {
+          <p class="form-hint coupon-hint" [class]="couponStatusClass()" role="status">{{ couponMessage() }}</p>
+        }
+
+        <div class="summary-line">
+          <span>{{ 'cart.subtotal' | translate }}</span>
+          <strong>{{ summary().subtotal | currency: 'ILS' : 'symbol' : '1.2-2' }}</strong>
+        </div>
+        <div class="summary-line">
+          <span>{{ 'cart.shipping' | translate }}</span>
+          <strong>{{ summary().shippingCost | currency: 'ILS' : 'symbol' : '1.2-2' }}</strong>
+        </div>
+        <div class="summary-line">
+          <span>{{ 'cart.discount' | translate }}</span>
+          <strong>-{{ summary().discount | currency: 'ILS' : 'symbol' : '1.2-2' }}</strong>
+        </div>
+        <div class="summary-line">
+          <span>{{ 'cart.tax' | translate }}</span>
+          <strong>{{ summary().tax | currency: 'ILS' : 'symbol' : '1.2-2' }}</strong>
+        </div>
+            <div class="summary-line total">
+          <span>{{ 'cart.grandTotal' | translate }}</span>
+          <strong>{{ summary().total | currency: 'ILS' : 'symbol' : '1.2-2' }}</strong>
+            </div>
+
+        <div class="summary-note">
+          <span class="material-icons" aria-hidden="true">shield</span>
+          <span>{{ 'cart.secure' | translate }}</span>
+        </div>
+
+        @if (requiresDeliveryAddress() && !hasDeliveryAddress()) {
+          <p class="form-hint" role="status">{{ 'cart.deliveryRequired' | translate }}</p>
+        }
+
+        <button
+          type="button"
+          class="brand-button checkout-button"
+          [disabled]="checkoutDisabled()"
+          [attr.aria-busy]="isCheckingOut()"
+          (click)="createOrder()"
+        >
+          <span class="material-icons" aria-hidden="true">receipt_long</span>
+          {{ isCheckingOut() ? ('cart.processing' | translate) : ('cart.createOrder' | translate) }}
+        </button>
+      </aside>
+    </section>
+  }
+</section>

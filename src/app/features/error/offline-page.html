@@ -1,0 +1,15 @@
+<section class="automotive-page error-page">
+  <section class="empty-state" role="status" aria-live="polite" aria-labelledby="offline-title">
+    <div class="empty-state-content">
+      <span class="feature-icon material-icons" aria-hidden="true">{{ online() ? 'wifi' : 'wifi_off' }}</span>
+      <h1 id="offline-title">{{ online() ? 'Connection restored.' : 'You are offline.' }}</h1>
+      <p>
+        {{ online() ? 'Live catalog and account data are available again.' : 'Live catalog, cart, wishlist, orders, and profile data require a network connection.' }}
+      </p>
+      <div class="error-actions">
+        <a class="brand-button" routerLink="/home">Go Home</a>
+        <a class="ghost-button" routerLink="/products">Browse Products</a>
+      </div>
+    </div>
+  </section>
+</section>

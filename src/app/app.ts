@@ -1,12 +1,18 @@
-import { Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+
+import { RouteFocusService } from './core/services/route-focus.service';
+import { UiPreferencesService } from './core/services/ui-preferences.service';
+import { GlobalLoadingBar } from './shared/components/global-loading-bar/global-loading-bar';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, GlobalLoadingBar],
   templateUrl: './app.html',
-  styleUrl: './app.scss'
+  styleUrl: './app.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class App {
-  protected readonly title = signal('badran-store-frontend');
+  private readonly routeFocusService = inject(RouteFocusService);
+  private readonly uiPreferences = inject(UiPreferencesService);
 }

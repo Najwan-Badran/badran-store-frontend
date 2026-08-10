@@ -1,0 +1,42 @@
+@if (totalPages() > 1) {
+  <nav class="pagination" aria-label="Product pagination">
+    <button
+      mat-stroked-button
+      type="button"
+      [disabled]="pageIndex() === 0"
+      aria-label="Previous product page"
+      (click)="pageChanged.emit(pageIndex() - 1)"
+    >
+      <mat-icon aria-hidden="true">chevron_left</mat-icon>
+      Previous
+    </button>
+
+    <div class="page-list" aria-label="Product pages">
+      @for (page of pages(); track page) {
+        <button
+          mat-button
+          type="button"
+          [class.active]="page === pageIndex()"
+          [attr.aria-current]="page === pageIndex() ? 'page' : null"
+          [attr.aria-label]="'Go to product page ' + (page + 1)"
+          (click)="pageChanged.emit(page)"
+        >
+          {{ page + 1 }}
+        </button>
+      }
+    </div>
+
+    <button
+      mat-stroked-button
+      type="button"
+      [disabled]="pageIndex() + 1 >= totalPages()"
+      aria-label="Next product page"
+      (click)="pageChanged.emit(pageIndex() + 1)"
+    >
+      Next
+      <mat-icon aria-hidden="true">chevron_right</mat-icon>
+    </button>
+
+    <span class="summary">{{ totalElements() }} products</span>
+  </nav>
+}

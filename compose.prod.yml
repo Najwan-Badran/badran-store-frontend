@@ -1,0 +1,19 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: badran-store-frontend:production
+    environment:
+      API_BASE_URL: ${API_BASE_URL:-/api}
+      API_PROXY_PASS: ${API_PROXY_PASS:-http://backend:8080/api/}
+      CSP_CONNECT_SRC: ${CSP_CONNECT_SRC:-}
+      NGINX_PORT: ${NGINX_PORT:-8080}
+    ports:
+      - "${FRONTEND_PORT:-8080}:8080"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/healthz"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s

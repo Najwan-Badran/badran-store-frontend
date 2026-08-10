@@ -1,0 +1,14 @@
+<section class="product-grid" aria-label="Loading products" aria-busy="true">
+  @for (item of placeholders(); track item) {
+    <article class="product-card skeleton-card" aria-hidden="true">
+      <div class="product-visual skeleton-block"></div>
+      <div class="product-body">
+        <span class="skeleton-line short"></span>
+        <span class="skeleton-line"></span>
+        <span class="skeleton-line"></span>
+        <span class="skeleton-line medium"></span>
+        <span class="skeleton-action"></span>
+      </div>
+    </article>
+  }
+</section>

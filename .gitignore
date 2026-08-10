@@ -34,10 +34,18 @@ yarn-error.log
 .sass-cache/
 /connect.lock
 /coverage
+/playwright-report
+/test-results
+/.playwright
+/blob-report
 /libpeerconnection.log
 testem.log
 /typings
 __screenshots__/
+
+# Local environment
+.env
+.env.local
 
 # System files
 .DS_Store

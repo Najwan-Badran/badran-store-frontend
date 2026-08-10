@@ -1,0 +1,15 @@
+:host {
+  display: block;
+}
+
+.error-page {
+  min-height: 52vh;
+  align-content: center;
+}
+
+.error-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}

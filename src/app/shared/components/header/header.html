@@ -1,0 +1,83 @@
+<header class="site-header">
+  <div class="utility-row">
+    <span class="utility-message">{{ 'nav.automotiveSupply' | translate }}</span>
+
+    <div class="account-actions" [attr.aria-label]="'nav.account' | translate">
+      <button
+        mat-button
+        class="preference-button"
+        type="button"
+        (click)="toggleLanguage()"
+        [attr.aria-label]="'nav.language' | translate"
+      >
+        <mat-icon aria-hidden="true">translate</mat-icon>
+        <span>{{ 'nav.language' | translate }}</span>
+      </button>
+      <button
+        mat-icon-button
+        class="preference-button theme-button"
+        type="button"
+        (click)="toggleTheme()"
+        [attr.aria-label]="(uiPreferences.theme() === 'dark' ? 'nav.lightMode' : 'nav.darkMode') | translate"
+        [matTooltip]="(uiPreferences.theme() === 'dark' ? 'nav.lightMode' : 'nav.darkMode') | translate"
+      >
+        <mat-icon aria-hidden="true">{{ uiPreferences.theme() === 'dark' ? 'light_mode' : 'dark_mode' }}</mat-icon>
+      </button>
+      @if (isAuthenticated()) {
+        <app-user-menu />
+      } @else {
+        <a mat-button class="header-link" routerLink="/login" routerLinkActive="active-link">{{ 'nav.login' | translate }}</a>
+        <a mat-flat-button class="header-cta" routerLink="/register" routerLinkActive="active-link">{{ 'nav.register' | translate }}</a>
+      }
+    </div>
+  </div>
+
+  <mat-toolbar class="main-row">
+    <button mat-icon-button type="button" class="menu-button" [attr.aria-label]="'nav.openMenu' | translate" (click)="openMenu()">
+      <mat-icon aria-hidden="true">menu</mat-icon>
+    </button>
+
+    <a class="brand" routerLink="/home" [attr.aria-label]="'nav.homeLabel' | translate">
+      <img class="brand-logo" src="/assets/badran-logo-transparent.png" alt="" aria-hidden="true" />
+      <span class="brand-copy">
+        <strong>{{ appName }}</strong>
+        <small>{{ 'nav.automotiveSupply' | translate }}</small>
+      </span>
+    </a>
+
+    <a class="header-search" routerLink="/products" aria-label="Search products">
+      <mat-icon aria-hidden="true">search</mat-icon>
+      <span>Search products</span>
+    </a>
+
+    <div class="mobile-actions" [attr.aria-label]="'nav.account' | translate">
+      <button
+        mat-icon-button
+        class="preference-button"
+        type="button"
+        (click)="toggleLanguage()"
+        [attr.aria-label]="'nav.language' | translate"
+      >
+        <mat-icon aria-hidden="true">translate</mat-icon>
+      </button>
+      <button
+        mat-icon-button
+        class="preference-button theme-button"
+        type="button"
+        (click)="toggleTheme()"
+        [attr.aria-label]="(uiPreferences.theme() === 'dark' ? 'nav.lightMode' : 'nav.darkMode') | translate"
+        [matTooltip]="(uiPreferences.theme() === 'dark' ? 'nav.lightMode' : 'nav.darkMode') | translate"
+      >
+        <mat-icon aria-hidden="true">{{ uiPreferences.theme() === 'dark' ? 'light_mode' : 'dark_mode' }}</mat-icon>
+      </button>
+    </div>
+  </mat-toolbar>
+
+  <div class="navigation-row">
+    <a class="department-link" routerLink="/products">
+      <mat-icon aria-hidden="true">apps</mat-icon>
+      <span>All categories</span>
+    </a>
+    <app-navigation class="desktop-navigation" />
+  </div>
+</header>

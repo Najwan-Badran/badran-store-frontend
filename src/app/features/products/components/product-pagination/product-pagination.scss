@@ -1,0 +1,68 @@
+:host {
+  display: block;
+}
+
+.pagination {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  gap: 12px;
+  align-items: center;
+  color: var(--app-text-muted);
+  font-weight: 800;
+  border-top: 1px solid var(--app-border);
+  padding-top: 16px;
+}
+
+.pagination button {
+  min-height: 42px;
+  border-radius: var(--app-radius-sm);
+  color: var(--app-text);
+  font-weight: 900;
+}
+
+.page-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+}
+
+.page-list button {
+  min-width: 42px;
+  padding-inline: 10px;
+}
+
+.page-list button.active {
+  background: color-mix(in srgb, var(--app-primary) 18%, transparent);
+  color: #ffffff;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--app-primary) 38%, transparent);
+}
+
+.page-list button:hover:not(.active) {
+  background: var(--app-card-raised);
+}
+
+.summary {
+  justify-self: end;
+  white-space: nowrap;
+}
+
+@media (max-width: 760px) {
+  .pagination {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .page-list,
+  .summary {
+    grid-column: 1 / -1;
+  }
+
+  .page-list {
+    justify-content: flex-start;
+    order: -1;
+  }
+
+  .summary {
+    justify-self: start;
+  }
+}

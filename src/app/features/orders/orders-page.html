@@ -1,0 +1,159 @@
+<section class="automotive-page account-page">
+  <header class="page-heading">
+    <span class="eyebrow">
+      <span class="material-icons" aria-hidden="true">receipt_long</span>
+      Orders
+    </span>
+    <h1 class="page-title">{{ 'orders.title' | translate }} with clear status signals.</h1>
+    <p class="page-copy">
+      Track order progress with real backend order history, payment state, shipping details, and totals.
+    </p>
+  </header>
+
+  @if (isLoading()) {
+    <section class="orders-skeleton" aria-label="Loading orders" aria-busy="true">
+      @for (item of [1, 2, 3]; track item) {
+        <article class="dashboard-panel skeleton-card" aria-hidden="true">
+          <span class="skeleton-line short"></span>
+          <span class="skeleton-line"></span>
+          <span class="skeleton-line medium"></span>
+        </article>
+      }
+    </section>
+  } @else if (errorMessage()) {
+    <section class="empty-state" role="alert">
+      <div class="empty-state-content">
+        <span class="feature-icon material-icons" aria-hidden="true">error</span>
+        <h2>Orders could not load.</h2>
+        <p>{{ errorMessage() }}</p>
+        <button type="button" class="brand-button" (click)="loadOrders()">Retry</button>
+      </div>
+    </section>
+  } @else if (!orders().length) {
+    <section class="empty-state">
+      <div class="empty-state-content">
+        <span class="feature-icon material-icons" aria-hidden="true">receipt_long</span>
+        <h2>No orders yet.</h2>
+        <p>Create an order from your cart to begin tracking fulfillment and payment status.</p>
+        <a class="brand-button" routerLink="/products">Browse Products</a>
+      </div>
+    </section>
+  } @else {
+    <section class="metric-grid" aria-label="Order summary">
+      <article class="metric-card">
+        <strong>{{ orders().length }}</strong>
+        <span>Total orders</span>
+      </article>
+      <article class="metric-card">
+        <strong>{{ totalSpent() | currency: 'ILS' : 'symbol' : '1.2-2' }}</strong>
+        <span>Total spend</span>
+      </article>
+      <article class="metric-card">
+        <strong>{{ filteredOrders().length }}</strong>
+        <span>Visible results</span>
+      </article>
+      <article class="metric-card">
+        <strong>{{ statusOptions().length }}</strong>
+        <span>Status types</span>
+      </article>
+    </section>
+
+    <section class="orders-toolbar" aria-label="Order filters">
+      <label class="search-shell">
+        <span class="material-icons" aria-hidden="true">search</span>
+        <input
+          type="search"
+          name="orderSearch"
+          placeholder="Search by order number, status, or total"
+          aria-label="Search orders"
+          [ngModel]="searchTerm()"
+          (ngModelChange)="searchTerm.set($event)"
+        />
+      </label>
+      <label class="select-shell">
+        <span>Status</span>
+        <select name="orderStatus" [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event)">
+          <option value="all">All statuses</option>
+          @for (status of statusOptions(); track status) {
+            <option [value]="status">{{ statusLabel(status) }}</option>
+          }
+        </select>
+      </label>
+    </section>
+    @if (cancelMessage()) {
+      <section class="message-panel error" role="status">{{ cancelMessage() }}</section>
+    }
+
+    @if (!filteredOrders().length) {
+      <section class="empty-state">
+        <div class="empty-state-content">
+          <span class="feature-icon material-icons" aria-hidden="true">filter_alt_off</span>
+          <h2>No orders match these filters.</h2>
+          <p>Clear search text or choose another status.</p>
+          <button type="button" class="brand-button" (click)="searchTerm.set(''); statusFilter.set('all')">Reset Filters</button>
+        </div>
+      </section>
+    } @else {
+      <section class="orders-list" aria-label="My orders" aria-live="polite">
+        @for (order of filteredOrders(); track order.orderId) {
+          <article class="dashboard-panel order-card">
+            <div class="order-card-header">
+              <div>
+                <span class="eyebrow">{{ order.createdAt | date: 'mediumDate' }}</span>
+                <h2>
+                  <a [routerLink]="['/orders', order.orderId]">{{ order.orderNumber }}</a>
+                </h2>
+              </div>
+              <span class="order-status" [class]="statusTone(order.status)">{{ statusLabel(order.status) }}</span>
+            </div>
+
+            <dl class="order-facts">
+              <div>
+                <dt>Total</dt>
+                <dd>{{ order.total | currency: 'ILS' : 'symbol' : '1.2-2' }}</dd>
+              </div>
+              <div>
+                <dt>Items</dt>
+                <dd>{{ order.items.length }}</dd>
+              </div>
+              <div>
+                <dt>Shipping</dt>
+                <dd>{{ order.deliveryFee | currency: 'ILS' : 'symbol' : '1.2-2' }}</dd>
+              </div>
+              <div>
+                <dt>Payment</dt>
+                <dd>{{ paymentStatus(order) }}</dd>
+              </div>
+            </dl>
+
+            <div class="shipping-line">
+              <span class="material-icons" aria-hidden="true">local_shipping</span>
+              @if (order.fulfillmentMethod === 'pickup') {
+                Pickup order
+              } @else if (order.deliveryCity || order.deliveryZone || order.deliveryAddressLine) {
+                {{ order.deliveryCity || 'Delivery' }}{{ order.deliveryZone ? ', ' + order.deliveryZone : '' }}{{ order.deliveryAddressLine ? ' · ' + order.deliveryAddressLine : '' }}
+              } @else {
+                Delivery details pending
+              }
+            </div>
+
+            <div class="order-card-actions">
+              <a class="ghost-button row-action" [routerLink]="['/orders', order.orderId]">View Details</a>
+              @if (canCancel(order)) {
+                <button
+                  type="button"
+                  class="ghost-button row-action"
+                  [disabled]="cancellingOrderId() === order.orderId"
+                  [attr.aria-busy]="cancellingOrderId() === order.orderId"
+                  (click)="cancelOrder(order)"
+                >
+                  Cancel Order
+                </button>
+              }
+            </div>
+          </article>
+        }
+      </section>
+    }
+  }
+</section>

@@ -1,0 +1,40 @@
+:host {
+  display: block;
+  min-height: 100dvh;
+}
+
+.admin-shell {
+  min-height: 100dvh;
+  background: transparent;
+}
+
+.shell-container {
+  min-height: 100dvh;
+  background: inherit;
+}
+
+.shell-content {
+  display: grid;
+  min-height: 100dvh;
+  grid-template-rows: auto 1fr auto;
+}
+
+.mobile-sidenav {
+  width: min(84vw, 320px);
+  border-inline-end: 1px solid var(--app-border);
+  background: var(--app-surface);
+}
+
+.admin-main {
+  width: min(100% - 32px, var(--app-content-width));
+  margin-inline: auto;
+  padding-block: clamp(28px, 5vw, 56px);
+  outline: none;
+}
+
+@media (max-width: 600px) {
+  .admin-main {
+    width: min(100% - 24px, 1200px);
+    padding-block: 24px;
+  }
+}

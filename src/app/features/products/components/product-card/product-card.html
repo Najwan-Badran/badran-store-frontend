@@ -1,0 +1,61 @@
+<article class="product-card" [attr.aria-labelledby]="productTitleId()">
+  <a
+    class="product-visual"
+    [routerLink]="['/products', product().productId]"
+    [attr.aria-label]="'View details for ' + product().nameEn"
+  >
+    <app-product-image
+      [src]="primaryImage()"
+      [alt]="product().nameEn"
+      [loading]="priority() ? 'eager' : 'lazy'"
+      [fetchPriority]="priority() ? 'high' : 'auto'"
+    />
+  </a>
+
+  @if (hasDiscount()) {
+    <span class="discount-badge">-{{ discountPercent() }}%</span>
+  } @else if (product().isNewArrival) {
+    <span class="discount-badge arrival-badge">New</span>
+  }
+
+  <button
+    mat-icon-button
+    class="wishlist-button"
+    type="button"
+    [disabled]="pending()"
+    [attr.aria-busy]="pending()"
+    [attr.aria-label]="effectiveWishlistAriaLabel()"
+    (click)="addToWishlist.emit(product())"
+  >
+    <mat-icon aria-hidden="true">{{ wishlistIcon() }}</mat-icon>
+  </button>
+
+  <div class="product-body">
+    <h2 [id]="productTitleId()">
+      <a [routerLink]="['/products', product().productId]">{{ product().nameEn }}</a>
+    </h2>
+
+    <div class="price-row">
+      @if (hasDiscount()) {
+        <span class="price">{{ discountPrice() | currency: 'ILS' : 'symbol' : '1.2-2' }}</span>
+        <span class="original-price">{{ product().basePrice | currency: 'ILS' : 'symbol' : '1.2-2' }}</span>
+      } @else {
+        <span class="price">{{ product().basePrice | currency: 'ILS' : 'symbol' : '1.2-2' }}</span>
+      }
+    </div>
+
+    <button
+      mat-flat-button
+      color="primary"
+      class="cart-button"
+      type="button"
+      [disabled]="pending() || product().stockQuantity <= 0"
+      [attr.aria-busy]="pending()"
+      [attr.aria-label]="'Add ' + product().nameEn + ' to cart'"
+      (click)="addToCart.emit(product())"
+    >
+      <mat-icon aria-hidden="true">add_shopping_cart</mat-icon>
+      {{ pending() ? pendingLabel() : (cartLabel() || ('product.addToCart' | translate)) }}
+    </button>
+  </div>
+</article>

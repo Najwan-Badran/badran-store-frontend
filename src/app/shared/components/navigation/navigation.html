@@ -1,0 +1,15 @@
+<nav class="navigation" [class.mobile]="orientation() === 'mobile'" [attr.aria-label]="'nav.primary' | translate">
+  @for (item of navigationItems(); track item.path) {
+    <a
+      mat-button
+      class="navigation-link"
+      [routerLink]="item.path"
+      routerLinkActive="active-link"
+      [routerLinkActiveOptions]="{ exact: item.exact }"
+      (click)="onNavigated()"
+    >
+      <mat-icon aria-hidden="true">{{ item.icon }}</mat-icon>
+      <span>{{ item.key | translate }}</span>
+    </a>
+  }
+</nav>

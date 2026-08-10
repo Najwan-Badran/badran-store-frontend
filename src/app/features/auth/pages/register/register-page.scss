@@ -1,0 +1,138 @@
+:host {
+  display: block;
+}
+
+.register-page {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(390px, 540px);
+  gap: clamp(24px, 5vw, 64px);
+  min-height: calc(100dvh - 184px);
+  align-items: center;
+}
+
+.auth-intro {
+  display: grid;
+  gap: 18px;
+}
+
+.auth-intro h1 {
+  max-width: 700px;
+  margin: 0;
+  color: var(--app-text);
+  font-size: clamp(2.6rem, 6vw, 5.5rem);
+  font-weight: 900;
+  line-height: 0.98;
+}
+
+.auth-intro p {
+  max-width: 560px;
+  margin: 0;
+  color: var(--app-text-muted);
+  font-size: 1.05rem;
+  line-height: 1.75;
+}
+
+.register-card {
+  width: min(100%, 520px);
+  justify-self: end;
+  border: 1px solid var(--app-border);
+  background:
+    linear-gradient(145deg, rgba(227, 6, 19, 0.09), transparent 44%),
+    var(--app-card);
+  border-radius: var(--app-radius-lg);
+  box-shadow: var(--app-shadow-soft);
+}
+
+.auth-logo {
+  display: block;
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+}
+
+mat-card-title {
+  margin-top: 14px;
+  color: var(--app-text);
+  font-size: 2rem;
+  font-weight: 900;
+}
+
+mat-card-subtitle {
+  color: var(--app-text-muted);
+}
+
+.register-form {
+  display: grid;
+  gap: 16px;
+  padding-top: 24px;
+}
+
+.form-alert {
+  border: 1px solid rgba(255, 74, 85, 0.45);
+  border-radius: var(--app-radius-sm);
+  background: rgba(255, 74, 85, 0.12);
+  color: var(--mat-sys-error);
+  font: var(--mat-sys-body-medium);
+  padding: 12px 14px;
+}
+
+.password-meter {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--app-border);
+  margin-top: -8px;
+}
+
+.password-meter span {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: #ffb1b6;
+  transition: width 160ms ease, background 160ms ease;
+}
+
+.password-meter.weak span {
+  width: 34%;
+  background: #ffb1b6;
+}
+
+.password-meter.medium span {
+  width: 67%;
+  background: #ffca55;
+}
+
+.password-meter.strong span {
+  width: 100%;
+  background: #7ee29a;
+}
+
+.submit-button {
+  min-height: 48px;
+  border-radius: var(--app-radius-sm);
+  font-weight: 900;
+}
+
+.submit-button mat-progress-spinner {
+  display: inline-block;
+  margin-inline-end: 8px;
+  vertical-align: middle;
+}
+
+@media (max-width: 600px) {
+  .register-page {
+    grid-template-columns: 1fr;
+    min-height: auto;
+    align-items: start;
+  }
+
+  .register-card {
+    width: 100%;
+    justify-self: stretch;
+  }
+
+  .auth-intro h1 {
+    font-size: 2.6rem;
+  }
+}

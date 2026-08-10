@@ -1,0 +1,613 @@
+<section class="automotive-page admin-page">
+  <header class="page-heading">
+    <span class="eyebrow">
+      <span class="material-icons" aria-hidden="true">admin_panel_settings</span>
+      {{ 'admin.title' | translate }}
+    </span>
+    <h1 class="page-title">{{ 'admin.heading' | translate }}</h1>
+    <p class="page-copy">{{ 'admin.description' | translate }}</p>
+  </header>
+
+  <nav class="admin-tabs" aria-label="Admin sections" role="tablist">
+    <button
+      type="button"
+      role="tab"
+      [id]="tabId('overview')"
+      [attr.aria-controls]="panelId('overview')"
+      [attr.aria-selected]="activeTab() === 'overview'"
+      [attr.tabindex]="activeTab() === 'overview' ? 0 : -1"
+      [class.active]="activeTab() === 'overview'"
+      (click)="setTab('overview')"
+      (keydown)="onTabKeydown($event, 'overview')"
+    >
+      {{ 'admin.overview' | translate }}
+    </button>
+    <button
+      type="button"
+      role="tab"
+      [id]="tabId('products')"
+      [attr.aria-controls]="panelId('products')"
+      [attr.aria-selected]="activeTab() === 'products'"
+      [attr.tabindex]="activeTab() === 'products' ? 0 : -1"
+      [class.active]="activeTab() === 'products'"
+      (click)="setTab('products')"
+      (keydown)="onTabKeydown($event, 'products')"
+    >
+      {{ 'admin.products' | translate }}
+    </button>
+    <button
+      type="button"
+      role="tab"
+      [id]="tabId('categories')"
+      [attr.aria-controls]="panelId('categories')"
+      [attr.aria-selected]="activeTab() === 'categories'"
+      [attr.tabindex]="activeTab() === 'categories' ? 0 : -1"
+      [class.active]="activeTab() === 'categories'"
+      (click)="setTab('categories')"
+      (keydown)="onTabKeydown($event, 'categories')"
+    >
+      {{ 'admin.categories' | translate }}
+    </button>
+    <button
+      type="button"
+      role="tab"
+      [id]="tabId('brands')"
+      [attr.aria-controls]="panelId('brands')"
+      [attr.aria-selected]="activeTab() === 'brands'"
+      [attr.tabindex]="activeTab() === 'brands' ? 0 : -1"
+      [class.active]="activeTab() === 'brands'"
+      (click)="setTab('brands')"
+      (keydown)="onTabKeydown($event, 'brands')"
+    >
+      {{ 'admin.brands' | translate }}
+    </button>
+    <button
+      type="button"
+      role="tab"
+      [id]="tabId('coupons')"
+      [attr.aria-controls]="panelId('coupons')"
+      [attr.aria-selected]="activeTab() === 'coupons'"
+      [attr.tabindex]="activeTab() === 'coupons' ? 0 : -1"
+      [class.active]="activeTab() === 'coupons'"
+      (click)="setTab('coupons')"
+      (keydown)="onTabKeydown($event, 'coupons')"
+    >
+      {{ 'admin.coupons' | translate }}
+    </button>
+    <button
+      type="button"
+      role="tab"
+      [id]="tabId('orders')"
+      [attr.aria-controls]="panelId('orders')"
+      [attr.aria-selected]="activeTab() === 'orders'"
+      [attr.tabindex]="activeTab() === 'orders' ? 0 : -1"
+      [class.active]="activeTab() === 'orders'"
+      (click)="setTab('orders')"
+      (keydown)="onTabKeydown($event, 'orders')"
+    >
+      {{ 'admin.orders' | translate }}
+    </button>
+    <button
+      type="button"
+      role="tab"
+      [id]="tabId('users')"
+      [attr.aria-controls]="panelId('users')"
+      [attr.aria-selected]="activeTab() === 'users'"
+      [attr.tabindex]="activeTab() === 'users' ? 0 : -1"
+      [class.active]="activeTab() === 'users'"
+      (click)="setTab('users')"
+      (keydown)="onTabKeydown($event, 'users')"
+    >
+      {{ 'admin.users' | translate }}
+    </button>
+  </nav>
+
+  @if (errorMessage()) {
+    <section class="message-panel error" role="alert">
+      <span class="material-icons" aria-hidden="true">error</span>
+      <span>{{ errorMessage() }}</span>
+      <button type="button" (click)="loadAdminData()">{{ 'admin.retry' | translate }}</button>
+    </section>
+  }
+  @if (successMessage()) {
+    <section class="message-panel success" role="status">
+      <span class="material-icons" aria-hidden="true">check_circle</span>
+      <span>{{ successMessage() }}</span>
+    </section>
+  }
+
+  <section class="admin-toolbar" aria-label="Admin search and filters">
+    <label class="admin-search">
+      <span class="material-icons" aria-hidden="true">search</span>
+      <input
+        type="search"
+        name="adminSearch"
+        [placeholder]="'admin.search' | translate"
+        aria-label="Search admin records"
+        [ngModel]="adminSearch()"
+        (ngModelChange)="setAdminSearch($event)"
+      />
+    </label>
+    @if (activeTab() === 'orders') {
+      <label class="admin-select">
+        <span>{{ 'admin.status' | translate }}</span>
+        <select name="adminOrderStatus" [ngModel]="adminOrderStatus()" (ngModelChange)="setAdminOrderStatus($event)">
+          <option value="all">{{ 'admin.allStatuses' | translate }}</option>
+          @for (status of orderStatuses; track status) {
+            <option [value]="status">{{ status }}</option>
+          }
+        </select>
+      </label>
+    }
+    @if (activeTab() !== 'overview' && activeTableState(); as state) {
+      <label class="admin-select">
+        <span>{{ 'admin.sort' | translate }}</span>
+        <select name="adminSortBy" [ngModel]="state.sortBy" (ngModelChange)="setAdminSort($event)">
+          @for (option of activeSortOptions(); track option.value) {
+            <option [value]="option.value">{{ option.label }}</option>
+          }
+        </select>
+      </label>
+      <label class="admin-select">
+        <span>{{ 'admin.direction' | translate }}</span>
+        <select name="adminSortDir" [ngModel]="state.sortDir" (ngModelChange)="setAdminSortDirection($event)">
+          <option value="asc">Ascending</option>
+          <option value="desc">Descending</option>
+        </select>
+      </label>
+      <label class="admin-select">
+        <span>{{ 'admin.rows' | translate }}</span>
+        <select name="adminPageSize" [ngModel]="state.size" (ngModelChange)="setAdminPageSize($event)">
+          <option [ngValue]="10">10</option>
+          <option [ngValue]="20">20</option>
+          <option [ngValue]="50">50</option>
+          <option [ngValue]="100">100</option>
+        </select>
+      </label>
+    }
+  </section>
+
+  @if (isLoading()) {
+    <section class="admin-loading-grid" [attr.aria-label]="'admin.loading' | translate" aria-busy="true">
+      @for (skeleton of [1, 2, 3, 4, 5, 6]; track skeleton) {
+        <article class="admin-skeleton" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </article>
+      }
+    </section>
+  } @else {
+    @if (activeTab() === 'overview') {
+      <section
+        class="metric-grid"
+        [id]="panelId('overview')"
+        role="tabpanel"
+        [attr.aria-labelledby]="tabId('overview')"
+        aria-label="Admin metrics"
+      >
+        <article class="metric-card">
+          <span class="metric-icon material-icons" aria-hidden="true">payments</span>
+          <strong>{{ dashboard()?.metrics?.totalRevenue | currency: 'ILS' : 'symbol' : '1.0-0' }}</strong>
+          <span>{{ 'admin.totalRevenue' | translate }}</span>
+        </article>
+        <article class="metric-card">
+          <span class="metric-icon material-icons" aria-hidden="true">receipt_long</span>
+          <strong>{{ dashboard()?.metrics?.totalOrders }}</strong>
+          <span>{{ 'admin.totalOrders' | translate }}</span>
+        </article>
+        <article class="metric-card">
+          <span class="metric-icon material-icons" aria-hidden="true">inventory_2</span>
+          <strong>{{ dashboard()?.metrics?.activeProducts }}</strong>
+          <span>{{ 'admin.activeProducts' | translate }}</span>
+        </article>
+        <article class="metric-card">
+          <span class="metric-icon material-icons" aria-hidden="true">warning</span>
+          <strong>{{ dashboard()?.metrics?.lowStockProducts }}</strong>
+          <span>{{ 'admin.inventoryAlerts' | translate }}</span>
+        </article>
+      </section>
+
+      <section class="admin-grid">
+        <article class="dashboard-panel">
+          <div class="status-row">
+            <div>
+              <span class="eyebrow">{{ 'admin.salesCharts' | translate }}</span>
+              <h2>{{ 'admin.dailySales' | translate }}</h2>
+            </div>
+            <span class="status-badge">{{ dashboard()?.sales?.orderCount }} orders</span>
+          </div>
+          <div class="sales-chart" aria-label="Daily sales chart">
+            @for (point of dashboard()?.salesChart ?? []; track point.date) {
+              <div class="chart-column">
+                <span class="chart-value">{{ point.salesTotal | currency: 'ILS' : 'symbol' : '1.0-0' }}</span>
+                <span class="chart-bar" [style.height]="barHeight(point.salesTotal)"></span>
+                <span class="chart-label">{{ point.date | date: 'MMM d' }}</span>
+              </div>
+            } @empty {
+              <p class="muted">No sales records returned by the backend.</p>
+            }
+          </div>
+        </article>
+
+        <article class="dashboard-panel">
+          <div class="status-row">
+            <div>
+              <span class="eyebrow">{{ 'admin.inventoryAlerts' | translate }}</span>
+              <h2>{{ 'admin.lowStock' | translate }}</h2>
+            </div>
+            <span class="status-badge">{{ lowStockProducts().length }} alerts</span>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr><th>SKU</th><th>Product</th><th>Stock</th><th>Threshold</th></tr>
+            </thead>
+            <tbody>
+              @for (product of lowStockProducts(); track product.productId) {
+                <tr>
+                  <td>{{ product.sku }}</td>
+                  <td>{{ product.nameEn }}</td>
+                  <td>{{ product.stockQuantity }}</td>
+                  <td>{{ product.reorderThreshold }}</td>
+                </tr>
+              } @empty {
+                <tr><td colspan="4">No low-stock products returned by the backend.</td></tr>
+              }
+            </tbody>
+          </table>
+        </article>
+      </section>
+
+      <section class="admin-grid">
+        <article class="dashboard-panel">
+          <span class="eyebrow">{{ 'admin.recentOrders' | translate }}</span>
+          <table class="data-table">
+            <thead>
+              <tr><th>Order</th><th>Status</th><th>Total</th><th>Date</th></tr>
+            </thead>
+            <tbody>
+              @for (order of dashboard()?.recentOrders ?? []; track order.orderId) {
+                <tr>
+                  <td>{{ order.orderNumber }}</td>
+                  <td>{{ order.status }}</td>
+                  <td>{{ order.total | currency: 'ILS' }}</td>
+                  <td>{{ order.createdAt | date: 'mediumDate' }}</td>
+                </tr>
+              } @empty {
+                <tr><td colspan="4">No recent orders returned by the backend.</td></tr>
+              }
+            </tbody>
+          </table>
+        </article>
+
+        <article class="dashboard-panel">
+          <span class="eyebrow">{{ 'admin.topProducts' | translate }}</span>
+          <table class="data-table">
+            <thead>
+              <tr><th>Product</th><th>Units</th><th>Revenue</th></tr>
+            </thead>
+            <tbody>
+              @for (product of dashboard()?.topProducts ?? []; track product.productId) {
+                <tr>
+                  <td>{{ product.nameEn || product.sku || product.productId }}</td>
+                  <td>{{ product.unitsSold }}</td>
+                  <td>{{ product.revenue | currency: 'ILS' }}</td>
+                </tr>
+              } @empty {
+                <tr><td colspan="3">No product sales returned by the backend.</td></tr>
+              }
+            </tbody>
+          </table>
+        </article>
+      </section>
+
+      <section class="dashboard-panel">
+        <span class="eyebrow">{{ 'admin.bestCustomers' | translate }}</span>
+        <table class="data-table">
+          <thead>
+            <tr><th>Customer</th><th>Email</th><th>Orders</th><th>Total spent</th></tr>
+          </thead>
+          <tbody>
+            @for (customer of dashboard()?.bestCustomers ?? []; track customer.userId) {
+              <tr>
+                <td>{{ customer.name || customer.userId }}</td>
+                <td>{{ customer.email || 'Unknown' }}</td>
+                <td>{{ customer.orderCount }}</td>
+                <td>{{ customer.totalSpent | currency: 'ILS' }}</td>
+              </tr>
+            } @empty {
+              <tr><td colspan="4">No customer ranking returned by the backend.</td></tr>
+            }
+          </tbody>
+        </table>
+      </section>
+    }
+
+    @if (activeTab() === 'products') {
+      <section class="editor-grid" [id]="panelId('products')" role="tabpanel" [attr.aria-labelledby]="tabId('products')">
+        <form class="dashboard-panel editor-form" (ngSubmit)="saveProduct()">
+          <span class="eyebrow">{{ editingProductId ? 'Edit Product' : 'Create Product' }}</span>
+          <input name="sku" required placeholder="SKU" aria-label="Product SKU" [(ngModel)]="productForm.sku" />
+          <input name="nameEn" required placeholder="English name" aria-label="Product English name" [(ngModel)]="productForm.nameEn" />
+          <input name="nameAr" required placeholder="Arabic name" aria-label="Product Arabic name" [(ngModel)]="productForm.nameAr" />
+          <textarea name="descriptionEn" placeholder="English description" aria-label="Product English description" [(ngModel)]="productForm.descriptionEn"></textarea>
+          <textarea name="descriptionAr" placeholder="Arabic description" aria-label="Product Arabic description" [(ngModel)]="productForm.descriptionAr"></textarea>
+          <select name="categoryId" required aria-label="Product category" [(ngModel)]="productForm.categoryId">
+            <option [ngValue]="null">Select category</option>
+            @for (category of collections().categories; track category.categoryId) {
+              <option [ngValue]="category.categoryId">{{ category.nameEn }}</option>
+            }
+          </select>
+          <select name="brandId" aria-label="Product brand" [(ngModel)]="productForm.brandId">
+            <option [ngValue]="null">No brand</option>
+            @for (brand of collections().brands; track brand.brandId) {
+              <option [ngValue]="brand.brandId">{{ brand.nameEn }}</option>
+            }
+          </select>
+          <div class="form-row">
+            <input name="basePrice" required type="number" min="0" step="0.01" placeholder="Price" aria-label="Product price" [(ngModel)]="productForm.basePrice" />
+            <input name="stockQuantity" required type="number" min="0" placeholder="Stock" aria-label="Product stock quantity" [(ngModel)]="productForm.stockQuantity" />
+            <input name="reorderThreshold" required type="number" min="0" placeholder="Reorder threshold" aria-label="Product reorder threshold" [(ngModel)]="productForm.reorderThreshold" />
+          </div>
+          <div class="check-row">
+            <label><input type="checkbox" name="productActive" [(ngModel)]="productForm.isActive" /> Active</label>
+            <label><input type="checkbox" name="onSale" [(ngModel)]="productForm.isOnSale" /> On sale</label>
+            <label><input type="checkbox" name="newArrival" [(ngModel)]="productForm.isNewArrival" /> New arrival</label>
+          </div>
+          <textarea name="imageUrls" placeholder="Image URLs, one per line" aria-label="Product image URLs" [(ngModel)]="productForm.imageUrls"></textarea>
+          <button class="brand-button" type="submit" [disabled]="isSaving()" [attr.aria-busy]="isSaving()">Save product</button>
+        </form>
+
+        <article class="dashboard-panel table-panel">
+          <span class="eyebrow">Products CRUD</span>
+          <table class="data-table">
+            <thead><tr><th>SKU</th><th>Name</th><th>Category</th><th>Stock</th><th aria-label="Product actions"></th></tr></thead>
+            <tbody>
+              @for (product of filteredProducts(); track product.productId) {
+                <tr>
+                  <td>{{ product.sku }}</td>
+                  <td>{{ product.nameEn }}</td>
+                  <td>{{ product.category.nameEn }}</td>
+                  <td>{{ product.stockQuantity }}</td>
+                  <td class="table-actions">
+                    <button type="button" (click)="editProduct(product)">Edit</button>
+                    <button type="button" (click)="deleteProduct(product.productId)">Deactivate</button>
+                  </td>
+                </tr>
+              }
+              @empty {
+                <tr><td colspan="5">No products match the current admin filters.</td></tr>
+              }
+            </tbody>
+          </table>
+          <div class="table-pagination" aria-label="Products pagination">
+            <button type="button" (click)="goToPage('products', meta('products').number - 1)" [disabled]="meta('products').first">Previous</button>
+            <span>Page {{ meta('products').number + 1 }} of {{ meta('products').totalPages || 1 }} · {{ meta('products').totalElements }} products</span>
+            <button type="button" (click)="goToPage('products', meta('products').number + 1)" [disabled]="meta('products').last">Next</button>
+          </div>
+        </article>
+      </section>
+    }
+
+    @if (activeTab() === 'categories') {
+      <section class="editor-grid" [id]="panelId('categories')" role="tabpanel" [attr.aria-labelledby]="tabId('categories')">
+        <form class="dashboard-panel editor-form" (ngSubmit)="saveCategory()">
+          <span class="eyebrow">{{ editingCategoryId ? 'Edit Category' : 'Create Category' }}</span>
+          <input name="categoryNameEn" required placeholder="English name" aria-label="Category English name" [(ngModel)]="categoryForm.nameEn" />
+          <input name="categoryNameAr" required placeholder="Arabic name" aria-label="Category Arabic name" [(ngModel)]="categoryForm.nameAr" />
+          <select name="parentCategoryId" aria-label="Parent category" [(ngModel)]="categoryForm.parentCategoryId">
+            <option [ngValue]="undefined">No parent</option>
+            @for (category of collections().categories; track category.categoryId) {
+              <option [ngValue]="category.categoryId">{{ category.nameEn }}</option>
+            }
+          </select>
+          <button class="brand-button" type="submit" [disabled]="isSaving()" [attr.aria-busy]="isSaving()">Save category</button>
+        </form>
+        <ng-container *ngTemplateOutlet="categoryTable"></ng-container>
+      </section>
+    }
+
+    @if (activeTab() === 'brands') {
+      <section class="editor-grid" [id]="panelId('brands')" role="tabpanel" [attr.aria-labelledby]="tabId('brands')">
+        <form class="dashboard-panel editor-form" (ngSubmit)="saveBrand()">
+          <span class="eyebrow">{{ editingBrandId ? 'Edit Brand' : 'Create Brand' }}</span>
+          <input name="brandNameEn" required placeholder="English name" aria-label="Brand English name" [(ngModel)]="brandForm.nameEn" />
+          <input name="brandNameAr" required placeholder="Arabic name" aria-label="Brand Arabic name" [(ngModel)]="brandForm.nameAr" />
+          <input name="logoUrl" placeholder="Logo URL" aria-label="Brand logo URL" [(ngModel)]="brandForm.logoUrl" />
+          <button class="brand-button" type="submit" [disabled]="isSaving()" [attr.aria-busy]="isSaving()">Save brand</button>
+        </form>
+        <ng-container *ngTemplateOutlet="brandTable"></ng-container>
+      </section>
+    }
+
+    @if (activeTab() === 'coupons') {
+      <section class="editor-grid" [id]="panelId('coupons')" role="tabpanel" [attr.aria-labelledby]="tabId('coupons')">
+        <form class="dashboard-panel editor-form" (ngSubmit)="saveCoupon()">
+          <span class="eyebrow">{{ editingCouponId ? 'Edit Coupon' : 'Create Coupon' }}</span>
+          <input name="couponCode" required placeholder="Code" aria-label="Coupon code" [(ngModel)]="couponForm.code" />
+          <select name="couponType" aria-label="Coupon type" [(ngModel)]="couponForm.type">
+            @for (type of couponTypes; track type) {
+              <option [value]="type">{{ type }}</option>
+            }
+          </select>
+          <input name="couponValue" required type="number" min="0.01" step="0.01" placeholder="Value" aria-label="Coupon value" [(ngModel)]="couponForm.value" />
+          <input name="validFrom" required type="date" aria-label="Coupon valid from date" [(ngModel)]="couponForm.validFrom" />
+          <input name="validTo" required type="date" aria-label="Coupon valid to date" [(ngModel)]="couponForm.validTo" />
+          <label><input type="checkbox" name="couponActive" [(ngModel)]="couponForm.isActive" /> Active</label>
+          <button class="brand-button" type="submit" [disabled]="isSaving()" [attr.aria-busy]="isSaving()">Save coupon</button>
+        </form>
+        <article class="dashboard-panel table-panel">
+          <span class="eyebrow">Coupons CRUD</span>
+          <table class="data-table">
+            <thead><tr><th>Code</th><th>Type</th><th>Value</th><th>Active</th><th aria-label="Coupon actions"></th></tr></thead>
+            <tbody>
+              @for (coupon of filteredCoupons(); track coupon.couponId) {
+                <tr>
+                  <td>{{ coupon.code }}</td>
+                  <td>{{ coupon.type }}</td>
+                  <td>{{ coupon.value }}</td>
+                  <td>{{ coupon.isActive ? 'Yes' : 'No' }}</td>
+                  <td class="table-actions">
+                    <button type="button" (click)="editCoupon(coupon)">Edit</button>
+                    <button type="button" (click)="deleteCoupon(coupon.couponId)">Delete</button>
+                  </td>
+                </tr>
+              }
+              @empty {
+                <tr><td colspan="5">No coupons match the current admin filters.</td></tr>
+              }
+            </tbody>
+          </table>
+          <div class="table-pagination" aria-label="Coupons pagination">
+            <button type="button" (click)="goToPage('coupons', meta('coupons').number - 1)" [disabled]="meta('coupons').first">Previous</button>
+            <span>Page {{ meta('coupons').number + 1 }} of {{ meta('coupons').totalPages || 1 }} · {{ meta('coupons').totalElements }} coupons</span>
+            <button type="button" (click)="goToPage('coupons', meta('coupons').number + 1)" [disabled]="meta('coupons').last">Next</button>
+          </div>
+        </article>
+      </section>
+    }
+
+    @if (activeTab() === 'orders') {
+      <section class="dashboard-panel" [id]="panelId('orders')" role="tabpanel" [attr.aria-labelledby]="tabId('orders')">
+        <span class="eyebrow">Orders Management</span>
+        <table class="data-table">
+          <thead><tr><th>Order</th><th>Customer</th><th>Total</th><th>Status</th><th>Date</th></tr></thead>
+          <tbody>
+            @for (order of filteredOrders(); track order.orderId) {
+              <tr>
+                <td>{{ order.orderNumber }}</td>
+                <td>{{ order.guestName || order.guestEmail || order.userId || 'Customer' }}</td>
+                <td>{{ order.total | currency: 'ILS' }}</td>
+                <td>
+                  <select [ngModel]="order.status" (ngModelChange)="updateOrderStatus(order, $event)" [name]="'orderStatus' + order.orderId">
+                    @for (status of orderStatuses; track status) {
+                      <option [value]="status">{{ status }}</option>
+                    }
+                  </select>
+                </td>
+                <td>{{ order.createdAt | date: 'mediumDate' }}</td>
+              </tr>
+            }
+            @empty {
+              <tr><td colspan="5">No orders match the current admin filters.</td></tr>
+            }
+          </tbody>
+        </table>
+        <div class="table-pagination" aria-label="Orders pagination">
+          <button type="button" (click)="goToPage('orders', meta('orders').number - 1)" [disabled]="meta('orders').first">Previous</button>
+          <span>Page {{ meta('orders').number + 1 }} of {{ meta('orders').totalPages || 1 }} · {{ meta('orders').totalElements }} orders</span>
+          <button type="button" (click)="goToPage('orders', meta('orders').number + 1)" [disabled]="meta('orders').last">Next</button>
+        </div>
+      </section>
+    }
+
+    @if (activeTab() === 'users') {
+      <section class="editor-grid" [id]="panelId('users')" role="tabpanel" [attr.aria-labelledby]="tabId('users')">
+        <form class="dashboard-panel editor-form" (ngSubmit)="saveUser()">
+          <span class="eyebrow">{{ editingUserId ? 'Edit User' : 'Create User' }}</span>
+          <input name="userName" required placeholder="Name" aria-label="User name" [(ngModel)]="userForm.name" />
+          <input name="userEmail" required type="email" placeholder="Email" aria-label="User email" [(ngModel)]="userForm.email" />
+          <input name="userPhone" placeholder="Phone" aria-label="User phone" [(ngModel)]="userForm.phone" />
+          @if (!editingUserId) {
+            <input name="userPassword" required type="password" placeholder="Password" aria-label="User password" [(ngModel)]="userForm.password" />
+          }
+          <select name="roleName" aria-label="User role" [(ngModel)]="userForm.roleName">
+            <option value="customer">customer</option>
+            <option value="admin">admin</option>
+          </select>
+          <input name="preferredLanguage" required placeholder="Preferred language" aria-label="User preferred language" [(ngModel)]="userForm.preferredLanguage" />
+          <label><input type="checkbox" name="userActive" [(ngModel)]="userForm.isActive" /> Active</label>
+          <button class="brand-button" type="submit" [disabled]="isSaving()" [attr.aria-busy]="isSaving()">Save user</button>
+        </form>
+        <article class="dashboard-panel table-panel">
+          <span class="eyebrow">Users Management</span>
+          <table class="data-table">
+            <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Active</th><th aria-label="User actions"></th></tr></thead>
+            <tbody>
+              @for (user of filteredUsers(); track user.userId) {
+                <tr>
+                  <td>{{ user.name }}</td>
+                  <td>{{ user.email }}</td>
+                  <td>{{ user.roleName }}</td>
+                  <td>{{ user.isActive ? 'Yes' : 'No' }}</td>
+                  <td class="table-actions">
+                    <button type="button" (click)="editUser(user)">Edit</button>
+                    <button type="button" (click)="deleteUser(user.userId)">Deactivate</button>
+                  </td>
+                </tr>
+              }
+              @empty {
+                <tr><td colspan="5">No users match the current admin filters.</td></tr>
+              }
+            </tbody>
+          </table>
+          <div class="table-pagination" aria-label="Users pagination">
+            <button type="button" (click)="goToPage('users', meta('users').number - 1)" [disabled]="meta('users').first">Previous</button>
+            <span>Page {{ meta('users').number + 1 }} of {{ meta('users').totalPages || 1 }} · {{ meta('users').totalElements }} users</span>
+            <button type="button" (click)="goToPage('users', meta('users').number + 1)" [disabled]="meta('users').last">Next</button>
+          </div>
+        </article>
+      </section>
+    }
+  }
+</section>
+
+<ng-template #categoryTable>
+  <article class="dashboard-panel table-panel">
+    <span class="eyebrow">Categories CRUD</span>
+    <table class="data-table">
+      <thead><tr><th>Name</th><th>Arabic</th><th>Parent</th><th aria-label="Category actions"></th></tr></thead>
+      <tbody>
+        @for (category of filteredCategories(); track category.categoryId) {
+          <tr>
+            <td>{{ category.nameEn }}</td>
+            <td>{{ category.nameAr }}</td>
+            <td>{{ categoryName(category.parentCategoryId) }}</td>
+            <td class="table-actions">
+              <button type="button" (click)="editCategory(category)">Edit</button>
+              <button type="button" (click)="deleteCategory(category.categoryId)">Delete</button>
+            </td>
+          </tr>
+        }
+        @empty {
+          <tr><td colspan="4">No categories match the current admin filters.</td></tr>
+        }
+      </tbody>
+    </table>
+    <div class="table-pagination" aria-label="Categories pagination">
+      <button type="button" (click)="goToPage('categories', meta('categories').number - 1)" [disabled]="meta('categories').first">Previous</button>
+      <span>Page {{ meta('categories').number + 1 }} of {{ meta('categories').totalPages || 1 }} · {{ meta('categories').totalElements }} categories</span>
+      <button type="button" (click)="goToPage('categories', meta('categories').number + 1)" [disabled]="meta('categories').last">Next</button>
+    </div>
+  </article>
+</ng-template>
+
+<ng-template #brandTable>
+  <article class="dashboard-panel table-panel">
+    <span class="eyebrow">Brands CRUD</span>
+    <table class="data-table">
+      <thead><tr><th>Name</th><th>Arabic</th><th>Logo</th><th aria-label="Brand actions"></th></tr></thead>
+      <tbody>
+        @for (brand of filteredBrands(); track brand.brandId) {
+          <tr>
+            <td>{{ brand.nameEn }}</td>
+            <td>{{ brand.nameAr }}</td>
+            <td>{{ brand.logoUrl || 'None' }}</td>
+            <td class="table-actions">
+              <button type="button" (click)="editBrand(brand)">Edit</button>
+              <button type="button" (click)="deleteBrand(brand.brandId)">Delete</button>
+            </td>
+          </tr>
+        }
+        @empty {
+          <tr><td colspan="4">No brands match the current admin filters.</td></tr>
+        }
+      </tbody>
+    </table>
+    <div class="table-pagination" aria-label="Brands pagination">
+      <button type="button" (click)="goToPage('brands', meta('brands').number - 1)" [disabled]="meta('brands').first">Previous</button>
+      <span>Page {{ meta('brands').number + 1 }} of {{ meta('brands').totalPages || 1 }} · {{ meta('brands').totalElements }} brands</span>
+      <button type="button" (click)="goToPage('brands', meta('brands').number + 1)" [disabled]="meta('brands').last">Next</button>
+    </div>
+  </article>
+</ng-template>

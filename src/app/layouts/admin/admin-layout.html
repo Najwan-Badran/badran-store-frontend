@@ -1,0 +1,19 @@
+<div class="admin-shell">
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <mat-sidenav-container class="shell-container" [attr.dir]="uiPreferences.direction()">
+    <mat-sidenav #mobileMenu class="mobile-sidenav" mode="over" fixedInViewport aria-label="Mobile navigation">
+      <app-mobile-menu (navigated)="mobileMenu.close()" />
+    </mat-sidenav>
+
+    <mat-sidenav-content class="shell-content">
+      <app-header (menuOpened)="mobileMenu.open()" />
+      <app-offline-banner />
+
+      <main id="main-content" class="admin-main" tabindex="-1">
+        <router-outlet />
+      </main>
+
+      <app-footer />
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>

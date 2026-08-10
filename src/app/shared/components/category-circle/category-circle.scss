@@ -1,0 +1,86 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.category-circle {
+  display: grid;
+  min-width: 0;
+  justify-items: center;
+  gap: 12px;
+  color: inherit;
+  text-align: center;
+  text-decoration: none;
+}
+
+.category-ring {
+  display: grid;
+  width: clamp(98px, 9vw, 132px);
+  aspect-ratio: 1;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--app-border) 82%, transparent);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 34% 24%, rgba(255, 255, 255, 0.9), transparent 32%),
+    var(--app-card);
+  color: var(--brand-red);
+  box-shadow: 0 12px 28px rgba(17, 24, 39, 0.08);
+  transition:
+    transform var(--app-motion-standard) ease,
+    border-color var(--app-motion-standard) ease,
+    box-shadow var(--app-motion-standard) ease,
+    background var(--app-motion-standard) ease;
+}
+
+.category-icon {
+  display: grid;
+  width: 54%;
+  aspect-ratio: 1;
+  place-items: center;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--brand-red) 10%, transparent);
+  font-size: clamp(2rem, 3.2vw, 2.6rem);
+  transition:
+    transform var(--app-motion-standard) ease,
+    color var(--app-motion-standard) ease,
+    background var(--app-motion-standard) ease;
+}
+
+.category-circle:hover .category-ring,
+.category-circle:focus-visible .category-ring {
+  transform: translateY(-7px);
+  border-color: color-mix(in srgb, var(--brand-red) 38%, var(--app-border));
+  background: #ffffff;
+  box-shadow: 0 18px 38px rgba(17, 24, 39, 0.13);
+}
+
+.category-circle:hover .category-icon,
+.category-circle:focus-visible .category-icon {
+  transform: scale(1.08);
+  background: var(--brand-red);
+  color: #ffffff;
+}
+
+strong {
+  display: -webkit-box;
+  max-width: 150px;
+  min-height: 2.5em;
+  overflow: hidden;
+  color: var(--app-text);
+  font-size: 0.9rem;
+  font-weight: 850;
+  line-height: 1.25;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+@media (max-width: 560px) {
+  .category-ring {
+    width: 92px;
+  }
+
+  strong {
+    max-width: 120px;
+    font-size: 0.84rem;
+  }
+}

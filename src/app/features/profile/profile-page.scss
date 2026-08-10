@@ -1,0 +1,307 @@
+:host {
+  display: block;
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.dashboard-panel {
+  display: grid;
+  gap: 16px;
+}
+
+.avatar-panel {
+  align-content: start;
+  background:
+    linear-gradient(145deg, rgba(227, 6, 19, 0.12), transparent 48%),
+    var(--app-card);
+}
+
+.profile-avatar {
+  display: grid;
+  width: 76px;
+  height: 76px;
+  overflow: hidden;
+  place-items: center;
+  border: 1px solid rgba(227, 6, 19, 0.42);
+  border-radius: var(--app-radius-lg);
+  background:
+    linear-gradient(145deg, rgba(227, 6, 19, 0.95), rgba(159, 6, 16, 0.86)),
+    #111111;
+  color: #ffffff;
+  font-size: 1.6rem;
+  font-weight: 900;
+}
+
+.profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-panel span {
+  display: block;
+  overflow: hidden;
+  color: var(--app-text-muted);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profile-identity {
+  display: grid;
+  gap: 5px;
+}
+
+.profile-identity .eyebrow {
+  margin-bottom: 4px;
+}
+
+.profile-identity h2 {
+  margin: 0;
+  color: var(--app-text);
+  font-size: 1.2rem;
+}
+
+.profile-identity p {
+  overflow: hidden;
+  color: var(--app-text);
+  font-weight: 900;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-button {
+  display: inline-flex;
+  position: relative;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  min-height: 42px;
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius-sm);
+  color: var(--app-text);
+  cursor: pointer;
+  font-weight: 900;
+  padding-inline: 14px;
+}
+
+.file-button input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.avatar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.avatar-actions button,
+.address-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.avatar-actions .material-icons,
+.address-actions .material-icons {
+  font-size: 17px;
+}
+
+.dashboard-panel h2 {
+  margin: 0;
+  color: var(--app-text);
+}
+
+.dashboard-panel p,
+.muted {
+  margin: 0;
+  color: var(--app-text-muted);
+  line-height: 1.7;
+}
+
+.profile-list {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+}
+
+.profile-list div {
+  border-bottom: 1px solid var(--app-border);
+  padding-bottom: 10px;
+}
+
+.profile-list dt {
+  color: var(--app-text-muted);
+  font-size: 0.74rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.profile-list dd {
+  margin: 5px 0 0;
+  color: var(--app-text);
+  font-weight: 800;
+}
+
+.field-shell small,
+.form-message {
+  color: #ffb1b6;
+  font-size: 0.78rem;
+  font-weight: 800;
+  line-height: 1.4;
+  text-transform: none;
+}
+
+.form-message {
+  margin: 0;
+}
+
+.form-message.success {
+  color: #7ee29a;
+}
+
+.profile-form,
+.address-form {
+  display: grid;
+  gap: 12px;
+}
+
+.address-form {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: end;
+}
+
+.wide-field {
+  grid-column: span 2;
+}
+
+.checkbox-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--app-text-muted);
+  font-weight: 800;
+}
+
+.password-hint {
+  margin: -4px 0 0;
+  color: var(--app-text-muted);
+  font-size: 0.84rem;
+  font-weight: 800;
+  line-height: 1.5;
+}
+
+.password-hint.weak {
+  color: #ffb1b6;
+}
+
+.password-hint.medium {
+  color: #ffca55;
+}
+
+.password-hint.strong {
+  color: #7ee29a;
+}
+
+.password-meter {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--app-border);
+}
+
+.password-meter span {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: #ffb1b6;
+  transition: width 160ms ease, background 160ms ease;
+}
+
+.password-meter.weak span {
+  width: 34%;
+  background: #ffb1b6;
+}
+
+.password-meter.medium span {
+  width: 67%;
+  background: #ffca55;
+}
+
+.password-meter.strong span {
+  width: 100%;
+  background: #7ee29a;
+}
+
+button.brand-button,
+button.ghost-button {
+  width: fit-content;
+  border-width: 1px;
+  cursor: pointer;
+}
+
+.addresses-panel {
+  display: grid;
+  gap: 18px;
+}
+
+.addresses-panel h2 {
+  margin: 12px 0 0;
+  color: var(--app-text);
+}
+
+.address-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.address-grid .brand-card {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+}
+
+.address-grid .brand-card h3 {
+  margin: 0;
+}
+
+.address-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+@media (max-width: 900px) {
+  .profile-grid,
+  .address-grid,
+  .address-form {
+    grid-template-columns: 1fr;
+  }
+
+  .wide-field {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 560px) {
+  .avatar-actions,
+  .avatar-actions button,
+  .address-actions,
+  .address-actions button {
+    width: 100%;
+  }
+
+  .avatar-actions button,
+  .address-actions button {
+    justify-content: center;
+  }
+}

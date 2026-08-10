@@ -1,0 +1,14 @@
+:host {
+  display: block;
+}
+
+.back-link,
+.legal-panel .brand-button {
+  width: fit-content;
+}
+
+.legal-panel {
+  display: grid;
+  gap: 18px;
+  max-width: 860px;
+}

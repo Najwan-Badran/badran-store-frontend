@@ -1,0 +1,162 @@
+:host {
+  display: block;
+}
+
+.login-page {
+  display: grid;
+  min-height: calc(100dvh - 170px);
+  place-items: center;
+}
+
+.login-shell {
+  display: grid;
+  grid-template-columns: minmax(360px, 0.86fr) minmax(0, 1.14fr);
+  width: min(100%, 1080px);
+  overflow: hidden;
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius-lg);
+  background: var(--app-card);
+  box-shadow: var(--app-shadow-soft);
+}
+
+.login-card {
+  width: 100%;
+  border: 0;
+  border-radius: 0;
+  background: var(--app-card);
+  box-shadow: none;
+  padding: clamp(24px, 4vw, 44px);
+}
+
+.auth-logo {
+  display: block;
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+}
+
+mat-card-title {
+  margin-top: 14px;
+  color: var(--app-text);
+  font-size: 2.2rem;
+  font-weight: 950;
+}
+
+mat-card-subtitle {
+  color: var(--app-text-muted);
+  font-size: 0.95rem;
+}
+
+.login-form {
+  display: grid;
+  gap: 18px;
+  padding-top: 28px;
+}
+
+.form-alert {
+  border: 1px solid rgba(255, 74, 85, 0.45);
+  border-radius: var(--app-radius-sm);
+  background: rgba(255, 74, 85, 0.12);
+  color: var(--mat-sys-error);
+  font: var(--mat-sys-body-medium);
+  padding: 14px 16px;
+}
+
+.form-success {
+  border: 1px solid color-mix(in srgb, var(--app-primary) 45%, transparent);
+  border-radius: var(--app-radius-sm);
+  background: color-mix(in srgb, var(--app-primary) 12%, transparent);
+  color: #ffffff;
+  font: var(--mat-sys-body-medium);
+  padding: 14px 16px;
+}
+
+.submit-button {
+  min-height: 52px;
+  border-radius: var(--app-radius-sm);
+  font-weight: 950;
+}
+
+.submit-button mat-progress-spinner {
+  display: inline-block;
+  margin-inline-end: 8px;
+  vertical-align: middle;
+}
+
+.auth-intro {
+  display: grid;
+  align-content: center;
+  gap: 20px;
+  min-height: 620px;
+  padding: clamp(32px, 5vw, 64px);
+  background:
+    linear-gradient(135deg, rgba(227, 6, 19, 0.24), transparent 50%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
+    #151515;
+}
+
+.auth-intro h1 {
+  max-width: 590px;
+  margin: 0;
+  color: #ffffff;
+  font-size: clamp(2.5rem, 4.6vw, 4.8rem);
+  font-weight: 950;
+  line-height: 1;
+}
+
+.auth-intro p {
+  max-width: 520px;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.04rem;
+  line-height: 1.75;
+}
+
+.auth-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.auth-metrics span {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.76);
+  font-size: 0.8rem;
+  font-weight: 900;
+  padding: 9px 13px;
+}
+
+:host ::ng-deep .mat-mdc-text-field-wrapper {
+  min-height: 56px;
+  border-radius: var(--app-radius-sm);
+}
+
+@media (max-width: 860px) {
+  .login-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .auth-intro {
+    min-height: auto;
+    order: -1;
+  }
+}
+
+@media (max-width: 560px) {
+  .login-page {
+    min-height: auto;
+    place-items: start;
+  }
+
+  .login-shell {
+    border-radius: var(--app-radius-md);
+  }
+
+  .login-card,
+  .auth-intro {
+    padding: 24px;
+  }
+}

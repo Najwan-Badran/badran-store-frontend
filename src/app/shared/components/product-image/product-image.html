@@ -1,0 +1,24 @@
+@if (imageUrl(); as resolvedImageUrl) {
+  @if (loadedUrl() !== resolvedImageUrl) {
+    <span class="image-loading" [class.compact]="compact()" role="status" [attr.aria-label]="'Loading image for ' + alt()">
+      <span class="loading-mark" aria-hidden="true"></span>
+    </span>
+  }
+  <img
+    [src]="resolvedImageUrl"
+    [alt]="alt()"
+    [attr.loading]="loading()"
+    [attr.fetchpriority]="fetchPriority()"
+    [class.loaded]="loadedUrl() === resolvedImageUrl"
+    decoding="async"
+    (load)="markImageLoaded(resolvedImageUrl)"
+    (error)="markImageFailed(imageUrl())"
+  />
+} @else {
+  <span class="image-placeholder" [class.compact]="compact()" role="img" [attr.aria-label]="alt() + ' image unavailable'">
+    <span class="material-icons" aria-hidden="true">image_not_supported</span>
+    @if (!compact()) {
+      <span>No Image Available</span>
+    }
+  </span>
+}

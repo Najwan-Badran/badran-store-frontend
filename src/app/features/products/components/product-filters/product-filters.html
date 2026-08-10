@@ -1,0 +1,50 @@
+<aside class="filters" aria-label="Product filters">
+  <mat-expansion-panel expanded>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <mat-icon aria-hidden="true">tune</mat-icon>
+        Filters
+      </mat-panel-title>
+      <mat-panel-description>
+        {{ activeFilterCount() }} active
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+
+    @if (error()) {
+      <div class="filter-error" role="alert">
+        <span>{{ error() }}</span>
+        <button mat-button type="button" (click)="retryOptions.emit()">Retry</button>
+      </div>
+    }
+
+    <div class="filter-stack" [attr.aria-busy]="loading()">
+      <mat-form-field appearance="outline">
+        <mat-label>Category</mat-label>
+        <mat-select
+          [value]="categoryId()"
+          aria-label="Filter by category"
+          (selectionChange)="filtersChanged.emit({ categoryId: $event.value })"
+        >
+          <mat-option [value]="null">All categories</mat-option>
+          @for (category of categories(); track category.categoryId) {
+            <mat-option [value]="category.categoryId">{{ category.nameEn }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Brand</mat-label>
+        <mat-select
+          [value]="brandId()"
+          aria-label="Filter by brand"
+          (selectionChange)="filtersChanged.emit({ brandId: $event.value })"
+        >
+          <mat-option [value]="null">All brands</mat-option>
+          @for (brand of brands(); track brand.brandId) {
+            <mat-option [value]="brand.brandId">{{ brand.nameEn }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </mat-expansion-panel>
+</aside>
