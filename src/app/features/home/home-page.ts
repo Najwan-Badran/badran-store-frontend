@@ -15,6 +15,7 @@ import { TranslatePipe } from '../../shared/pipes/translate.pipe';
 import { ProductImage } from '../../shared/components/product-image/product-image';
 import { CategoryCircle } from '../../shared/components/category-circle/category-circle';
 import { ProductCard } from '../products/components/product-card/product-card';
+import { resolveBrandLogoUrl } from '../../core/utils/brand-logo-url';
 
 @Component({
   selector: 'app-home-page',
@@ -40,6 +41,7 @@ export class HomePage {
   protected readonly isLoading = signal(true);
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly pendingProductId = signal<number | null>(null);
+  protected readonly failedBrandLogoUrls = signal<ReadonlySet<string>>(new Set());
   protected readonly currentHeroSlide = signal(0);
   protected readonly heroTrackTransform = computed(() => {
     const offset = this.currentHeroSlide() * 100;
@@ -127,5 +129,19 @@ export class HomePage {
         next: () => this.snackBar.open(`${product.nameEn} saved to wishlist`, 'Close', { duration: 2500 }),
         error: (error: unknown) => this.snackBar.open(this.apiErrorService.getErrorDetails(error).message, 'Close', { duration: 3500 }),
       });
+  }
+
+  protected brandLogoUrl(brand: BrandDto): string | null {
+    const logoUrl = resolveBrandLogoUrl(brand.logoUrl);
+
+    return logoUrl && !this.failedBrandLogoUrls().has(logoUrl) ? logoUrl : null;
+  }
+
+  protected markBrandLogoFailed(url: string | null): void {
+    if (!url) {
+      return;
+    }
+
+    this.failedBrandLogoUrls.update((failedUrls) => new Set(failedUrls).add(url));
   }
 }

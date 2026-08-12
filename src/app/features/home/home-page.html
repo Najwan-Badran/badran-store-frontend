@@ -191,10 +191,10 @@
     <section class="brand-rail" aria-label="Popular brands">
       @for (brand of popularBrands(); track brand.brandId) {
         <a class="brand-logo-card" routerLink="/products" [queryParams]="{ brandId: brand.brandId }">
-          @if (brand.logoUrl) {
-            <img [src]="brand.logoUrl" [alt]="brand.nameEn" />
+          @if (brandLogoUrl(brand); as logoUrl) {
+            <img [src]="logoUrl" [alt]="brand.nameEn" (error)="markBrandLogoFailed(logoUrl)" />
           } @else {
-            <span>{{ brand.nameEn.slice(0, 2) }}</span>
+            <span class="brand-logo-fallback" role="img" [attr.aria-label]="brand.nameEn + ' logo unavailable'">{{ brand.nameEn.slice(0, 2) }}</span>
           }
           <strong>{{ brand.nameEn }}</strong>
         </a>

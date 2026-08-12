@@ -1,4 +1,5 @@
 import { ProductDto } from '../models/product.models';
+import { environment } from '../../../environments/environment';
 
 type ProductImageRecord = Record<string, unknown>;
 
@@ -12,7 +13,7 @@ export function getPrimaryProductImageUrl(product: ProductDto): string | null {
     const value = asNonEmptyString(productRecord[field]);
 
     if (value) {
-      return value;
+      return resolveProductImageUrl(value);
     }
   }
 
@@ -43,7 +44,9 @@ function getCollectionImageUrls(value: unknown): readonly string[] {
 
 function getImageUrl(image: unknown): string | null {
   if (typeof image === 'string') {
-    return asNonEmptyString(image);
+    const value = asNonEmptyString(image);
+
+    return value ? resolveProductImageUrl(value) : null;
   }
 
   if (!image || typeof image !== 'object') {
@@ -56,11 +59,35 @@ function getImageUrl(image: unknown): string | null {
     const value = asNonEmptyString(imageRecord[field]);
 
     if (value) {
-      return value;
+      return resolveProductImageUrl(value);
     }
   }
 
   return null;
+}
+
+function resolveProductImageUrl(url: string): string {
+  if (isAbsoluteUrl(url)) {
+    return url;
+  }
+
+  if (url.startsWith('/') || url.startsWith('assets/')) {
+    return joinUrl(getBackendBaseUrl(environment.apiBaseUrl), url);
+  }
+
+  return url;
+}
+
+function isAbsoluteUrl(url: string): boolean {
+  return /^(?:https?:)?\/\//i.test(url) || /^(?:data|blob):/i.test(url);
+}
+
+function getBackendBaseUrl(apiBaseUrl: string): string {
+  return apiBaseUrl.replace(/\/api(?:\/.*)?$/i, '');
+}
+
+function joinUrl(baseUrl: string, path: string): string {
+  return `${baseUrl.replace(/\/+$/, '')}/${path.replace(/^\/+/, '')}`;
 }
 
 function compareImageSortOrder(first: unknown, second: unknown): number {

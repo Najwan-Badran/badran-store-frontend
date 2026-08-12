@@ -11,6 +11,9 @@ const LEGACY_PRODUCT_IMAGES: Readonly<Record<string, string>> = {
   'airfreshener.jpg': '/assets/products/air-freshener-spray-bundle.png',
   'carsafety.jpg': '/assets/products/car-safety-driving-kit.png',
   'brash.jpg': '/assets/products/car-wash-brush-set.png',
+  'logo.jpg': '/assets/products/cardboard-protective-sheet.png',
+  '480685098_1116666237138533_4119862647474239646_n.jpg': '/assets/products/cardboard-protective-sheet.png',
+  '481300215_1118294503642373_1932279852176189809_n.jpg': '/assets/products/spray-cleaner-set.png',
 };
 
 const PRODUCT_ASSETS = new Set([
@@ -67,11 +70,24 @@ export class ProductImage {
   readonly fetchPriority = input<'high' | 'low' | 'auto'>('auto');
   readonly compact = input(false);
 
-  protected readonly failedUrl = signal<string | null>(null);
+  protected readonly failedUrls = signal<ReadonlySet<string>>(new Set());
   protected readonly loadedUrl = signal<string | null>(null);
   protected readonly imageUrl = computed(() => {
     const source = resolveProductImageUrl(this.src(), this.apiConfig.baseUrl);
-    return source && source !== this.failedUrl() ? source : null;
+
+    if (!source) {
+      return null;
+    }
+
+    const failedUrls = this.failedUrls();
+
+    if (!failedUrls.has(source)) {
+      return source;
+    }
+
+    const fallback = resolveLegacyProductImageUrl(this.src());
+
+    return fallback && fallback !== source && !failedUrls.has(fallback) ? fallback : null;
   });
 
   protected markImageLoaded(url: string): void {
@@ -79,7 +95,11 @@ export class ProductImage {
   }
 
   protected markImageFailed(url: string | null): void {
-    this.failedUrl.set(url);
+    if (!url) {
+      return;
+    }
+
+    this.failedUrls.update((failedUrls) => new Set(failedUrls).add(url));
   }
 }
 
@@ -88,6 +108,10 @@ function resolveProductImageUrl(url: string | null | undefined, apiBaseUrl: stri
 
   if (!normalizedUrl) {
     return null;
+  }
+
+  if (isAbsoluteUrl(normalizedUrl)) {
+    return normalizedUrl;
   }
 
   const filename = getFilename(normalizedUrl);
@@ -105,15 +129,21 @@ function resolveProductImageUrl(url: string | null | undefined, apiBaseUrl: stri
     return normalizedUrl.startsWith('/') ? normalizedUrl : `/${normalizedUrl}`;
   }
 
-  if (isAbsoluteUrl(normalizedUrl)) {
-    return normalizedUrl;
-  }
-
   if (normalizedUrl.startsWith('/')) {
     return joinUrl(apiBaseUrl, normalizedUrl);
   }
 
   return joinUrl(apiBaseUrl, normalizedUrl);
+}
+
+function resolveLegacyProductImageUrl(url: string | null | undefined): string | null {
+  const normalizedUrl = url?.trim();
+
+  if (!normalizedUrl) {
+    return null;
+  }
+
+  return LEGACY_PRODUCT_IMAGES[getFilename(normalizedUrl)] ?? null;
 }
 
 function isKnownProductAssetFilename(url: string, filename: string): boolean {
