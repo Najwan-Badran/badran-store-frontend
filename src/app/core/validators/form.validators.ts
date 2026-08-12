@@ -72,9 +72,13 @@ export function passwordStrength(value: string): 'empty' | 'weak' | 'medium' | '
 }
 
 export function normalizePhoneNumber(value: string | null | undefined): string | undefined {
-  const normalized = value?.replace(/[\s()-]/g, '').trim();
+  const normalized = stripPhoneFormatting(value);
 
   if (!normalized) {
+    return undefined;
+  }
+
+  if (!hasValidPhoneCharacters(normalized)) {
     return undefined;
   }
 
@@ -86,14 +90,26 @@ export function normalizePhoneNumber(value: string | null | undefined): string |
 }
 
 export function isValidPhoneNumber(value: string): boolean {
-  const normalized = value.replace(/[\s()-]/g, '').trim();
+  const normalized = stripPhoneFormatting(value);
   const palestineLocalPattern = /^0(59|56)\d{7}$/;
   const palestineInternationalPattern = /^\+9705\d{8}$/;
   const internationalPattern = /^\+[1-9]\d{7,14}$/;
+
+  if (!normalized || !hasValidPhoneCharacters(normalized)) {
+    return false;
+  }
 
   return (
     palestineLocalPattern.test(normalized) ||
     palestineInternationalPattern.test(normalized) ||
     internationalPattern.test(normalized)
   );
+}
+
+function stripPhoneFormatting(value: string | null | undefined): string | undefined {
+  return value?.replace(/[\s()-]/g, '').trim();
+}
+
+function hasValidPhoneCharacters(value: string): boolean {
+  return /^\+?\d+$/.test(value);
 }

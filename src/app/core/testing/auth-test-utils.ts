@@ -19,10 +19,15 @@ export function createMemoryStorage(): Storage {
 
 export function installMemoryStorage(): Storage {
   const storage = createMemoryStorage();
+  const sessionStorage = createMemoryStorage();
 
   Object.defineProperty(globalThis, 'localStorage', {
     configurable: true,
     value: storage,
+  });
+  Object.defineProperty(globalThis, 'sessionStorage', {
+    configurable: true,
+    value: sessionStorage,
   });
 
   return storage;
@@ -30,6 +35,7 @@ export function installMemoryStorage(): Storage {
 
 export function uninstallMemoryStorage(): void {
   Reflect.deleteProperty(globalThis, 'localStorage');
+  Reflect.deleteProperty(globalThis, 'sessionStorage');
 }
 
 export function createJwt(payload: object): string {

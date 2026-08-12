@@ -1,6 +1,7 @@
 import { HttpClient, HttpContext, provideHttpClient, withInterceptors } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { of, throwError } from 'rxjs';
 
 import { provideApiConfig } from '../config/api.config';
 import { AuthService } from '../services/auth.service';
@@ -18,11 +19,13 @@ describe('authTokenInterceptor', () => {
   let http: HttpClient;
   let httpTestingController: HttpTestingController;
   let storage: Storage;
+  let sessionStorage: Storage;
   let authService: AuthService;
   let tokenService: TokenService;
 
   beforeEach(() => {
     storage = installMemoryStorage();
+    sessionStorage = globalThis.sessionStorage;
 
     TestBed.configureTestingModule({
       providers: [
@@ -156,6 +159,68 @@ describe('authTokenInterceptor', () => {
     const request = httpTestingController.expectOne('https://api.example.test/api/products');
     expect(request.request.headers.has('Authorization')).toBe(false);
     expect(storage.getItem('badran_store_access_token')).toBeNull();
+    request.flush({});
+  });
+
+  it('refreshes an expired token and retries the original request with the new authorization header', () => {
+    const refreshedToken = createJwt(
+      createJwtPayload({
+        userId: 42,
+      }),
+    );
+    tokenService.setAccessToken(
+      createJwt(
+        createJwtPayload({
+          iat: nowInSeconds() - 7200,
+          exp: nowInSeconds() - 3600,
+        }),
+      ),
+    );
+    tokenService.setRefreshToken('valid-refresh-token');
+    vi.spyOn(authService, 'refreshSession').mockImplementation(() => {
+      tokenService.setAccessToken(refreshedToken);
+
+      return of({
+        userId: 42,
+        email: 'customer@example.com',
+        name: 'Customer User',
+        role: 'customer',
+      });
+    });
+
+    http.get('https://api.example.test/api/products').subscribe();
+
+    expect(authService.refreshSession).toHaveBeenCalledTimes(1);
+    const request = httpTestingController.expectOne('https://api.example.test/api/products');
+    expect(request.request.headers.get('Authorization')).toBe(`Bearer ${refreshedToken}`);
+    expect(request.request.headers.get('X-User-Id')).toBe('42');
+    request.flush({});
+  });
+
+  it('clears the session when refreshing an expired token fails and sends a session-scoped request anonymously', () => {
+    tokenService.setAccessToken(
+      createJwt(
+        createJwtPayload({
+          iat: nowInSeconds() - 7200,
+          exp: nowInSeconds() - 3600,
+        }),
+      ),
+    );
+    tokenService.setRefreshToken('valid-refresh-token');
+    vi.spyOn(authService, 'refreshSession').mockReturnValue(
+      throwError(() => new Error('Unable to refresh session.')),
+    );
+    vi.spyOn(authService, 'clearSession');
+
+    http.get('https://api.example.test/api/v1/cart').subscribe();
+
+    expect(authService.refreshSession).toHaveBeenCalledTimes(1);
+    expect(authService.clearSession).toHaveBeenCalledTimes(1);
+    expect(storage.getItem('badran_store_access_token')).toBeNull();
+    expect(sessionStorage.getItem('badran_store_refresh_token')).toBeNull();
+    const request = httpTestingController.expectOne('https://api.example.test/api/v1/cart');
+    expect(request.request.headers.has('Authorization')).toBe(false);
+    expect(request.request.headers.get('X-Session-Id')).toBeTruthy();
     request.flush({});
   });
 

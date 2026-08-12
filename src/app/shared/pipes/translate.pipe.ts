@@ -11,30 +11,46 @@ export class TranslatePipe implements PipeTransform {
   private readonly changeDetector = inject(ChangeDetectorRef);
   private static readonly dictionaries = new Map<string, TranslationMap>();
   private static readonly loading = new Set<string>();
+  private static readonly failed = new Set<string>();
   private static readonly dictionaryVersion = signal(0);
 
   transform(key: string): string {
     TranslatePipe.dictionaryVersion();
     const language = this.preferences.language();
     this.load(language);
-    return TranslatePipe.dictionaries.get(language)?.[key] ?? DEFAULT_LABELS[key] ?? key;
+    return this.dictionaryFor(language)?.[key] ?? DEFAULT_LABELS[key] ?? key;
   }
 
   private load(language: string): void {
-    if (TranslatePipe.dictionaries.has(language) || TranslatePipe.loading.has(language)) {
+    if (
+      TranslatePipe.dictionaries.has(language) ||
+      TranslatePipe.loading.has(language) ||
+      TranslatePipe.failed.has(language)
+    ) {
       return;
     }
 
+    const path = `assets/i18n/${language}.json`;
     TranslatePipe.loading.add(language);
-    this.http.get<TranslationMap>(`assets/i18n/${language}.json`).subscribe({
+    this.http.get<TranslationMap>(path).subscribe({
       next: (dictionary) => {
         TranslatePipe.dictionaries.set(language, dictionary);
         TranslatePipe.loading.delete(language);
         TranslatePipe.dictionaryVersion.update((version) => version + 1);
         this.changeDetector.detectChanges();
       },
-      error: () => TranslatePipe.loading.delete(language),
+      error: () => {
+        console.warn(`Unable to load translations for language "${language}" from "${path}".`);
+        TranslatePipe.loading.delete(language);
+        TranslatePipe.failed.add(language);
+        TranslatePipe.dictionaryVersion.update((version) => version + 1);
+        this.changeDetector.detectChanges();
+      },
     });
+  }
+
+  private dictionaryFor(language: string): TranslationMap | undefined {
+    return TranslatePipe.dictionaries.get(language) ?? TranslatePipe.dictionaries.get('en');
   }
 }
 

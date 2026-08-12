@@ -2,14 +2,17 @@ import { inject, Injectable } from '@angular/core';
 
 import { BackendJwtPayload } from '../models/jwt-payload.model';
 import { LocalStorageService } from './local-storage.service';
+import { SessionStorageService } from './session-storage.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TokenService {
   private readonly localStorageService = inject(LocalStorageService);
+  private readonly sessionStorageService = inject(SessionStorageService);
 
   private readonly accessTokenKey = 'badran_store_access_token';
+  // TODO: Store refresh tokens in an HttpOnly Secure cookie once backend support is available.
   private readonly refreshTokenKey = 'badran_store_refresh_token';
 
   getAccessToken(): string | null {
@@ -25,15 +28,15 @@ export class TokenService {
   }
 
   getRefreshToken(): string | null {
-    return this.localStorageService.getItem(this.refreshTokenKey);
+    return this.sessionStorageService.getItem(this.refreshTokenKey);
   }
 
   setRefreshToken(token: string): void {
-    this.localStorageService.setItem(this.refreshTokenKey, token);
+    this.sessionStorageService.setItem(this.refreshTokenKey, token);
   }
 
   clearRefreshToken(): void {
-    this.localStorageService.removeItem(this.refreshTokenKey);
+    this.sessionStorageService.removeItem(this.refreshTokenKey);
   }
 
   clearTokens(): void {

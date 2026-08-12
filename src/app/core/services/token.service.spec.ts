@@ -11,10 +11,12 @@ import { TokenService } from './token.service';
 
 describe('TokenService', () => {
   let storage: Storage;
+  let sessionStorage: Storage;
   let tokenService: TokenService;
 
   beforeEach(() => {
     storage = installMemoryStorage();
+    sessionStorage = globalThis.sessionStorage;
     tokenService = TestBed.inject(TokenService);
   });
 
@@ -32,6 +34,29 @@ describe('TokenService', () => {
     tokenService.clearAccessToken();
 
     expect(tokenService.getAccessToken()).toBeNull();
+  });
+
+  it('stores and clears the refresh token in session storage', () => {
+    tokenService.setRefreshToken('refresh-token');
+
+    expect(tokenService.getRefreshToken()).toBe('refresh-token');
+    expect(storage.getItem('badran_store_refresh_token')).toBeNull();
+    expect(sessionStorage.getItem('badran_store_refresh_token')).toBe('refresh-token');
+
+    tokenService.clearRefreshToken();
+
+    expect(tokenService.getRefreshToken()).toBeNull();
+    expect(sessionStorage.getItem('badran_store_refresh_token')).toBeNull();
+  });
+
+  it('clears access and refresh tokens from their storage locations', () => {
+    tokenService.setAccessToken('access-token');
+    tokenService.setRefreshToken('refresh-token');
+
+    tokenService.clearTokens();
+
+    expect(storage.getItem('badran_store_access_token')).toBeNull();
+    expect(sessionStorage.getItem('badran_store_refresh_token')).toBeNull();
   });
 
   it('decodes a valid backend JWT payload', () => {

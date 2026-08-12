@@ -11,9 +11,11 @@ import { AuthService } from './auth.service';
 
 describe('AuthService', () => {
   let storage: Storage;
+  let sessionStorage: Storage;
 
   beforeEach(() => {
     storage = installMemoryStorage();
+    sessionStorage = globalThis.sessionStorage;
   });
 
   afterEach(() => {
@@ -80,14 +82,15 @@ describe('AuthService', () => {
       role: 'customer',
     });
     expect(authService.hasValidSession()).toBe(true);
-    expect(storage.getItem('badran_store_refresh_token')).toBe('refresh-token');
+    expect(storage.getItem('badran_store_refresh_token')).toBeNull();
+    expect(sessionStorage.getItem('badran_store_refresh_token')).toBe('refresh-token');
 
     authService.clearSession();
 
     expect(authService.user()).toBeNull();
     expect(authService.isAuthenticated()).toBe(false);
     expect(storage.getItem('badran_store_access_token')).toBeNull();
-    expect(storage.getItem('badran_store_refresh_token')).toBeNull();
+    expect(sessionStorage.getItem('badran_store_refresh_token')).toBeNull();
   });
 
   it('uses JWT claims instead of mutable login response fields for authorization state', () => {
